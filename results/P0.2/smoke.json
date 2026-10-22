@@ -1,0 +1,51 @@
+{
+  "input_ids": [
+    510,
+    5347,
+    273,
+    6181,
+    310
+  ],
+  "logits_shape": [
+    1,
+    5,
+    50304
+  ],
+  "dtype": "float32",
+  "top5_next_tokens": [
+    {
+      "token": " the",
+      "token_id": 253,
+      "probability": 0.1274290829896927
+    },
+    {
+      "token": " a",
+      "token_id": 247,
+      "probability": 0.08399958908557892
+    },
+    {
+      "token": " not",
+      "token_id": 417,
+      "probability": 0.043775685131549835
+    },
+    {
+      "token": " in",
+      "token_id": 275,
+      "probability": 0.023482978343963623
+    },
+    {
+      "token": "\n",
+      "token_id": 187,
+      "probability": 0.022668980062007904
+    }
+  ],
+  "model_info": {
+    "name": "EleutherAI/pythia-70m-deduped",
+    "revision": "step143000",
+    "resolved_commit_sha": "9a7c847e93250c8f24d4b7e7134dbf369e8fc9cb",
+    "dtype": "float32",
+    "device": "cpu",
+    "n_layers": 6,
+    "d_model": 512
+  }
+}

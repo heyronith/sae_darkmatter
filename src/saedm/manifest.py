@@ -65,6 +65,7 @@ def write_manifest(
     outputs: list[str] | None = None,
     started_at: datetime | None = None,
     ended_at: datetime | None = None,
+    model_info: Mapping[str, Any] | None = None,
 ) -> Path:
     """Write results/<task_id>/manifest.json and return its path."""
     task_dir = Path(out_dir) if out_dir is not None else results_dir() / task_id
@@ -78,7 +79,7 @@ def write_manifest(
     start = started_at or datetime.now(UTC)
     end = ended_at or datetime.now(UTC)
 
-    manifest = {
+    manifest: dict[str, Any] = {
         "task_id": task_id,
         "git_commit": _git_commit(),
         "git_dirty": _git_dirty(),
@@ -97,6 +98,8 @@ def write_manifest(
         "device": _device_info(),
         "outputs": list(outputs or []),
     }
+    if model_info is not None:
+        manifest["model_info"] = dict(model_info)
 
     path = task_dir / "manifest.json"
     with path.open("w") as f:

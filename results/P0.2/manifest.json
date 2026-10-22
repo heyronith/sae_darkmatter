@@ -1,0 +1,41 @@
+{
+  "task_id": "P0.2",
+  "git_commit": "f603d08fdd55da03041aa398b528a9593b642324",
+  "git_dirty": true,
+  "timestamp_utc": {
+    "start": "2026-10-22T02:07:43.745554Z",
+    "end": "2026-10-22T02:07:44.399791Z"
+  },
+  "seed": 0,
+  "config": {
+    "model": "EleutherAI/pythia-70m-deduped",
+    "revision": "step143000",
+    "dtype": "float32",
+    "prompt": "The capital of France is",
+    "seed": 0,
+    "task_id": "P0.2"
+  },
+  "versions": {
+    "python": "3.11.15",
+    "torch": "2.14.1",
+    "transformers": "5.20.2"
+  },
+  "hostname": "Mac",
+  "device": {
+    "type": "cpu",
+    "name": null
+  },
+  "outputs": [
+    "results/P0.2/smoke.json",
+    "results/P0.2/smoke_fp16.json"
+  ],
+  "model_info": {
+    "name": "EleutherAI/pythia-70m-deduped",
+    "revision": "step143000",
+    "resolved_commit_sha": "9a7c847e93250c8f24d4b7e7134dbf369e8fc9cb",
+    "dtype": "float32",
+    "device": "cpu",
+    "n_layers": 6,
+    "d_model": 512
+  }
+}

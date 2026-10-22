@@ -1,4 +1,6 @@
 model: EleutherAI/pythia-70m-deduped
+revision: step143000
+dtype: float32
 prompt: "The capital of France is"
 seed: 0
-task_id: P0.1
+task_id: P0.2
