@@ -1,0 +1,22 @@
+{
+  "dataset_id": "EleutherAI/pythia-memorized-evals",
+  "split": "deduped.410m",
+  "revision": "d97edd12f08884dae3dfcef8d5cbbba5129e49e0",
+  "total_memorized_count": 811039,
+  "sample_size": 20000,
+  "seed": 0,
+  "row_schema": {
+    "index": "int \u2014 Pile training-sequence index (0-based)",
+    "tokens": "list[int] \u2014 first 64 tokens (32 prompt + 32 continuation)",
+    "__index_level_0__": "int \u2014 pandas export artifact (same as index)"
+  },
+  "memorization_definition": "32-token prompt, greedy 32-token continuation, exact match (Biderman et al. 2023); final checkpoint step143000",
+  "note": "All rows in this split are memorized (score == 1 by construction); there is no separate score column.",
+  "sample_paths": {
+    "local": {
+      "sample_indices": "data/P1.1/sample_indices.npy",
+      "sample_parquet": "data/P1.1/sample.parquet"
+    },
+    "remote": "modal:saedm-artifacts:/P1.1/P1.1"
+  }
+}

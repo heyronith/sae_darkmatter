@@ -1,0 +1,35 @@
+{
+  "task_id": "P1.1",
+  "git_commit": "809ac8dc0ebaeba6eea28207b6598e0cb9a5a673",
+  "git_dirty": false,
+  "timestamp_utc": {
+    "start": "2026-10-22T04:03:53.512488Z",
+    "end": "2026-10-22T04:03:56.018333Z"
+  },
+  "seed": 0,
+  "config": {
+    "task_id": "P1.1",
+    "dataset_id": "EleutherAI/pythia-memorized-evals",
+    "split": "deduped.410m",
+    "sample_size": 20000,
+    "seed": 0
+  },
+  "versions": {
+    "python": "3.11.15",
+    "torch": "2.14.1",
+    "transformers": "5.20.2"
+  },
+  "hostname": "Mac",
+  "device": {
+    "type": "cpu",
+    "name": null
+  },
+  "precision": {
+    "cuda_matmul_allow_tf32": false,
+    "cudnn_allow_tf32": false,
+    "float32_matmul_precision": "highest"
+  },
+  "outputs": [
+    "results/P1.1/summary.json"
+  ]
+}
