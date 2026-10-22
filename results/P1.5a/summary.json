@@ -1,0 +1,35 @@
+{
+  "model": "EleutherAI/pythia-410m-deduped",
+  "final_revision": "step143000",
+  "n_probe_requested": 300,
+  "n_probe": 300,
+  "n_unique_revisions": 144,
+  "index_range_memorized_split": {
+    "min": 441,
+    "max": 146431917,
+    "n": 811039
+  },
+  "dataset_meta": {
+    "dataset_id": "EleutherAI/pythia-memorized-evals",
+    "split": "deduped.410m",
+    "revision": "d97edd12f08884dae3dfcef8d5cbbba5129e49e0",
+    "n_rows": 811039
+  },
+  "recollection_sha256": "a9fe85e5273dbf5770b62b484f87442323cdee33fbaabd01be4dbc6487d9663e",
+  "median_drop_before_to_after": 0.0019431337714195251,
+  "median_drop_far_to_before": 0.002973545342683792,
+  "bootstrap_diff_pred_minus_ctrl": {
+    "median_a": 0.0017099641263484955,
+    "median_b": 0.002973545342683792,
+    "diff": -0.0012635812163352966,
+    "ci_low": -0.00515834242105484,
+    "ci_high": 0.0022459235042333603,
+    "n_boot": 10000.0
+  },
+  "fraction_largest_drop_is_predicted": 0.46735395189003437,
+  "n_with_far_before": 291,
+  "passed": false,
+  "gpu_hours": 0.9218026139330557,
+  "wall_clock_s": 376.92917224997655,
+  "gpu_requested": "A100"
+}
