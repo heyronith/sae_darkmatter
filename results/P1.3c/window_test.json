@@ -1,0 +1,32 @@
+{
+  "n": 300,
+  "seed": 0,
+  "windows": {
+    "prompt": {
+      "n_usable": 300,
+      "n_skipped": 0,
+      "violation_rate": 0.3,
+      "spearman": 0.932177805181068,
+      "mean_k_infgram": 306206.1666666667,
+      "median_k_infgram": 14.5
+    },
+    "continuation": {
+      "n_usable": 300,
+      "n_skipped": 0,
+      "violation_rate": 0.11666666666666667,
+      "spearman": 0.30512386250263657,
+      "mean_k_infgram": 917541.9133333333,
+      "median_k_infgram": 6155.5
+    },
+    "full64": {
+      "n_usable": 300,
+      "n_skipped": 0,
+      "violation_rate": 0.38,
+      "spearman": 0.9381132336536255,
+      "mean_k_infgram": 304666.07,
+      "median_k_infgram": 12.5
+    }
+  },
+  "best_window": "continuation",
+  "rows_path": "window_test_rows.jsonl"
+}

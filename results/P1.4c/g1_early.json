@@ -1,0 +1,44 @@
+{
+  "source_commit_heuristics": "84ab8c0289f0f74b4b1edd99ba7d2bea8d58a6a2",
+  "huffman_threshold": 2.5,
+  "k_source": "P1.3c k_primary (deduped continuation S[32:64])",
+  "total_memorized": 811039,
+  "sample_size": 20000,
+  "n_unmatched": 0,
+  "n_trivial": 958,
+  "n_excluded_from_strata": 958,
+  "per_stratum": {
+    "low": {
+      "before": 8375,
+      "after": 7184,
+      "removed_incrementing": 1118,
+      "removed_repeating": 50,
+      "removed_compressible": 38,
+      "removed_any_template": 1191
+    },
+    "mid": {
+      "before": 1291,
+      "after": 1051,
+      "removed_incrementing": 187,
+      "removed_repeating": 50,
+      "removed_compressible": 6,
+      "removed_any_template": 240
+    },
+    "high": {
+      "before": 9376,
+      "after": 8443,
+      "removed_incrementing": 643,
+      "removed_repeating": 285,
+      "removed_compressible": 18,
+      "removed_any_template": 933
+    }
+  },
+  "low_stratum_survivors_in_sample": 7184,
+  "scaled_low_survivor_estimate": {
+    "point": 291325.2088,
+    "ci95_low": 285954.8381906619,
+    "ci95_high": 296739.4398635295,
+    "method": "wilson_proportion * total_memorized"
+  },
+  "verdict": "continue_to_P1.5"
+}
