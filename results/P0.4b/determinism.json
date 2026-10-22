@@ -1,0 +1,65 @@
+{
+  "within_process_bitwise_identical": true,
+  "within_process_max_abs_diff": 0.0,
+  "cross_call_bitwise_identical": true,
+  "cross_call_max_abs_diff": 0.0,
+  "eager_vs_sdpa_max_abs_diff": 0.00537109375,
+  "prompts": [
+    "The capital of France is",
+    "In the beginning,",
+    "def fibonacci(n):",
+    "Once upon a time",
+    "The quick brown fox",
+    "import numpy as np",
+    "To be or not to be",
+    "Machine learning models"
+  ],
+  "call1": {
+    "device": {
+      "type": "cuda",
+      "name": "NVIDIA A100-SXM4-80GB",
+      "index": 0
+    },
+    "precision": {
+      "cuda_matmul_allow_tf32": false,
+      "cudnn_allow_tf32": false,
+      "float32_matmul_precision": "highest"
+    },
+    "model_info": {
+      "name": "EleutherAI/pythia-70m-deduped",
+      "revision": "step143000",
+      "resolved_commit_sha": "9a7c847e93250c8f24d4b7e7134dbf369e8fc9cb",
+      "dtype": "float32",
+      "device": "cuda",
+      "attn_implementation": "eager",
+      "n_layers": 6,
+      "d_model": 512
+    },
+    "cuda_version": "13.0",
+    "torch_version": "2.14.1+cu130"
+  },
+  "call2": {
+    "device": {
+      "type": "cuda",
+      "name": "NVIDIA A100-SXM4-80GB",
+      "index": 0
+    },
+    "precision": {
+      "cuda_matmul_allow_tf32": false,
+      "cudnn_allow_tf32": false,
+      "float32_matmul_precision": "highest"
+    },
+    "model_info": {
+      "name": "EleutherAI/pythia-70m-deduped",
+      "revision": "step143000",
+      "resolved_commit_sha": "9a7c847e93250c8f24d4b7e7134dbf369e8fc9cb",
+      "dtype": "float32",
+      "device": "cuda",
+      "attn_implementation": "eager",
+      "n_layers": 6,
+      "d_model": 512
+    },
+    "cuda_version": "13.0",
+    "torch_version": "2.14.1+cu130"
+  }
+}

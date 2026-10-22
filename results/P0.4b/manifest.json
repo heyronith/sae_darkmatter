@@ -1,0 +1,49 @@
+{
+  "task_id": "P0.4b",
+  "git_commit": "71bf11ab0c1dec693b71084921547f17eda54c9e",
+  "git_dirty": false,
+  "timestamp_utc": {
+    "start": "2026-10-22T03:55:43.414991Z",
+    "end": "2026-10-22T03:56:11.104945Z"
+  },
+  "seed": 0,
+  "config": {
+    "model": "EleutherAI/pythia-70m-deduped",
+    "revision": "step143000",
+    "dtype": "float32",
+    "attn_implementation": "eager",
+    "seed": 0,
+    "gpu": "A100-80GB",
+    "task_id": "P0.4b",
+    "n_prompts": 8
+  },
+  "versions": {
+    "python": "3.11.15",
+    "torch": "2.14.1",
+    "transformers": "5.20.2"
+  },
+  "hostname": "Mac",
+  "device": {
+    "type": "cuda",
+    "name": "NVIDIA A100-SXM4-80GB",
+    "index": 0
+  },
+  "precision": {
+    "cuda_matmul_allow_tf32": false,
+    "cudnn_allow_tf32": false,
+    "float32_matmul_precision": "highest"
+  },
+  "outputs": [
+    "results/P0.4b/determinism.json"
+  ],
+  "model_info": {
+    "name": "EleutherAI/pythia-70m-deduped",
+    "revision": "step143000",
+    "resolved_commit_sha": "9a7c847e93250c8f24d4b7e7134dbf369e8fc9cb",
+    "dtype": "float32",
+    "device": "cuda",
+    "attn_implementation": "eager",
+    "n_layers": 6,
+    "d_model": 512
+  }
+}
