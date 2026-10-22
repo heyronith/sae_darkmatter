@@ -370,6 +370,26 @@ def stratum_for_k(k: int) -> str:
     return "high"
 
 
+def stratum_recollection(
+    k_primary: int,
+    k_infgram: int,
+    *,
+    near_dup_threshold: int = 32,
+) -> str:
+    """P1.4d strata: split low into recollection vs near_dup via k_infgram.
+
+    - recollection: k_primary in 1–5 and k_infgram <= threshold
+    - near_dup:     k_primary in 1–5 and k_infgram > threshold
+    - mid / high / unmatched: same as :func:`stratum_for_k`
+    """
+    base = stratum_for_k(k_primary)
+    if base != "low":
+        return base
+    if int(k_infgram) <= int(near_dup_threshold):
+        return "recollection"
+    return "near_dup"
+
+
 def summarize_counts(ks: list[int]) -> dict[str, Any]:
     hist: dict[str, int] = {}
     strata = {"unmatched": 0, "low": 0, "mid": 0, "high": 0, "k_le_2": 0}
