@@ -12,6 +12,10 @@ dependencies = [
     "numpy",
     "pandas",
     "wandb",
+    "scipy>=1.17.1",
+    "requests>=2.34.2",
+    "pyarrow>=26.0.0",
+    "huggingface-hub>=2.2.0",
 ]
 
 [dependency-groups]
