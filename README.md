@@ -20,6 +20,14 @@ uv run pytest
 uv run python scripts/smoke_pythia.py
 ```
 
+## Modal GPU smoke
+
+```bash
+# Regenerate Modal image deps whenever uv.lock changes:
+uv export --no-dev --no-hashes --format requirements-txt --no-emit-project > modal_jobs/requirements.lock
+modal run modal_jobs/hello_gpu.py
+```
+
 ## Conventions
 
 - Task IDs follow `P<phase>.<n>` (e.g. `P0.1`).
