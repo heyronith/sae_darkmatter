@@ -1,0 +1,129 @@
+{
+  "top5_next_tokens": [
+    {
+      "token": " the",
+      "token_id": 253,
+      "probability": 0.12737470865249634
+    },
+    {
+      "token": " a",
+      "token_id": 247,
+      "probability": 0.08405604213476181
+    },
+    {
+      "token": " not",
+      "token_id": 417,
+      "probability": 0.04371963068842888
+    },
+    {
+      "token": " in",
+      "token_id": 275,
+      "probability": 0.02347295731306076
+    },
+    {
+      "token": "\n",
+      "token_id": 187,
+      "probability": 0.02267867885529995
+    }
+  ],
+  "gpu_name": "NVIDIA A100-SXM4-80GB",
+  "cuda_version": "13.0",
+  "torch_version": "2.14.1+cu130",
+  "wall_time_s": 13.950480323,
+  "precision": {
+    "cuda_matmul_allow_tf32": false,
+    "cudnn_allow_tf32": false,
+    "float32_matmul_precision": "highest"
+  },
+  "model_info": {
+    "name": "EleutherAI/pythia-70m-deduped",
+    "revision": "step143000",
+    "resolved_commit_sha": "9a7c847e93250c8f24d4b7e7134dbf369e8fc9cb",
+    "dtype": "float32",
+    "device": "cuda",
+    "n_layers": 6,
+    "d_model": 512
+  },
+  "nvidia_smi": "Thu Oct 22 03:31:54 2026       \n+-----------------------------------------------------------------------------------------+\n| NVIDIA-SMI 610.57.04              KMD Version: 610.57.04     CUDA UMD Version: 13.3     |\n+-----------------------------------------+------------------------+----------------------+\n| GPU  Name                 Persistence-M | Bus-Id          Disp.A | Volatile Uncorr. ECC |\n| Fan  Temp   Perf          Pwr:Usage/Cap |           Memory-Usage | GPU-Util  Compute M. |\n|                                         |                        |               MIG M. |\n|=========================================+========================+======================|\n|   0  NVIDIA A100-SXM4-80GB          On  |   00000000:BD:00.0 Off |                    0 |\n| N/A   32C    P0             69W /  500W |       4MiB /  81920MiB |      0%      Default |\n|                                         |                        |             Disabled |\n+-----------------------------------------+------------------------+----------------------+\n\n+-----------------------------------------------------------------------------------------+\n| Processes:                                                                              |\n|  GPU   GI   CI              PID   Type   Process name                        GPU Memory |\n|        ID   ID                                                               Usage      |\n|=========================================================================================|\n|  No running processes found                                                             |\n+-----------------------------------------------------------------------------------------+\n",
+  "input_ids": [
+    510,
+    5347,
+    273,
+    6181,
+    310
+  ],
+  "logits_shape": [
+    1,
+    5,
+    50304
+  ],
+  "comparison": {
+    "cpu_path": "results/P0.2/smoke.json",
+    "same_top5_token_order": true,
+    "max_abs_probability_diff": 5.6453049182891846e-05,
+    "per_rank_abs_diff": [
+      5.43743371963501e-05,
+      5.6453049182891846e-05,
+      5.605444312095642e-05,
+      1.0021030902862549e-05,
+      9.698793292045593e-06
+    ],
+    "cpu_top5": [
+      {
+        "token": " the",
+        "token_id": 253,
+        "probability": 0.1274290829896927
+      },
+      {
+        "token": " a",
+        "token_id": 247,
+        "probability": 0.08399958908557892
+      },
+      {
+        "token": " not",
+        "token_id": 417,
+        "probability": 0.043775685131549835
+      },
+      {
+        "token": " in",
+        "token_id": 275,
+        "probability": 0.023482978343963623
+      },
+      {
+        "token": "\n",
+        "token_id": 187,
+        "probability": 0.022668980062007904
+      }
+    ],
+    "gpu_top5": [
+      {
+        "token": " the",
+        "token_id": 253,
+        "probability": 0.12737470865249634
+      },
+      {
+        "token": " a",
+        "token_id": 247,
+        "probability": 0.08405604213476181
+      },
+      {
+        "token": " not",
+        "token_id": 417,
+        "probability": 0.04371963068842888
+      },
+      {
+        "token": " in",
+        "token_id": 275,
+        "probability": 0.02347295731306076
+      },
+      {
+        "token": "\n",
+        "token_id": 187,
+        "probability": 0.02267867885529995
+      }
+    ]
+  },
+  "prompt": "The capital of France is",
+  "seed": 0,
+  "gpu_requested": "A100-80GB"
+}
