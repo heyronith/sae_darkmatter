@@ -1,0 +1,95 @@
+{
+  "pool": {
+    "seed": 0,
+    "epoch1": {
+      "deduped_pile_tokens": 207000000000,
+      "packed_seq_len": 2049,
+      "n_sequences_one_epoch": 101024890,
+      "fraction": 0.95,
+      "index_cutoff": 95973645,
+      "step_cutoff": 93724,
+      "derivation": "floor(207000000000 / 2049) = 101024890; cutoff = floor(0.95 * 101024890) = 95973645"
+    },
+    "k_primary_dataset": {
+      "dataset_id": "usvsnsp/deduped-num-duplicates",
+      "revision": "b905c09d5e1e0ec81ff5318d66e81436dce50bc0",
+      "parquet": "data/train-00000-of-00001-a51cc17920038302.parquet",
+      "definition": "Exact duplicate count of each 32-token (GPT-NeoX) training window in the near-deduplicated Pile; Index == Pile sequence id. Released with EleutherAI/semantic-memorization (commit 84ab8c0289f0f74b4b1edd99ba7d2bea8d58a6a2).",
+      "corpus": "Pile near-deduplicated (Pythia-deduped training corpus)",
+      "window_tokens": 32,
+      "match_type": "exact"
+    },
+    "memorized_meta": {
+      "dataset_id": "EleutherAI/pythia-memorized-evals",
+      "split": "deduped.410m",
+      "revision": "d97edd12f08884dae3dfcef8d5cbbba5129e49e0",
+      "n_rows": 811039
+    },
+    "filter_counts": {
+      "n_full_memorized": 811039,
+      "n_k_primary_1": 131490,
+      "n_epoch1": 86087,
+      "n_step_ge_10000": 77065,
+      "n_trivial_removed": 2302,
+      "n_template_removed": 6565,
+      "n_candidates_after_filters": 68198,
+      "n_sampled": 20000,
+      "max_sample": 20000
+    },
+    "template_commit": "84ab8c0289f0f74b4b1edd99ba7d2bea8d58a6a2",
+    "huffman_threshold": 2.5,
+    "min_step": 10000,
+    "step_range_sampled": {
+      "min": 10003,
+      "max": 93723
+    },
+    "candidates_path": "data/P1.5b/candidates.jsonl"
+  },
+  "stage1": {
+    "n_candidates": 20000,
+    "hard_ce_threshold": 1.0,
+    "n_hard": 380,
+    "n_reconstruction_ce_sel_le_1": 19620,
+    "reconstruction_fraction": 0.981
+  },
+  "mapping": {
+    "n_hard": 380,
+    "median_drop_pred": 0.15296483039855957,
+    "median_drop_placebo": 0.049193888902664185,
+    "bootstrap_diff_pred_minus_placebo": {
+      "median_a": 0.15296483039855957,
+      "median_b": 0.049193888902664185,
+      "diff": 0.10377094149589539,
+      "ci_low": 0.04018764421343803,
+      "ci_high": 0.1837203502655029,
+      "n_boot": 10000.0,
+      "paired": 1.0
+    },
+    "fraction_drop_pred_gt_placebo": 0.5789473684210527,
+    "pass_rule": "ci_low > 0 AND median_drop_pred >= 3 * median_drop_placebo (or placebo<=0 with pred>0)",
+    "passed": true
+  },
+  "verified": {
+    "drop_pred_min": 0.5,
+    "min_novel": 8,
+    "infgram_max": 32,
+    "n_before_infgram_filter": 67,
+    "n_infgram_excluded": 65,
+    "n_verified": 2,
+    "scaled_to_filtered_pool": {
+      "sample_count": 2,
+      "sample_size": 20000,
+      "pool_after_cpu_filters": 68198,
+      "point": 6.819800000000001,
+      "ci95_low": 1.8702252089259193,
+      "ci95_high": 24.863711576496343,
+      "method": "wilson(verified/n_gpu_sample) * n_candidates_after_cpu_filters"
+    },
+    "sha256": "e79ff7b25ef2534c739c33d4e980140a85b303ab450ab85469ad3630a8b518f7"
+  },
+  "passed": true,
+  "gpu_hours": 0.3609624664411111,
+  "wall_clock_s": 221.91299704206176,
+  "gpu_requested": "A100",
+  "model": "EleutherAI/pythia-410m-deduped"
+}

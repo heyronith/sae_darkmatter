@@ -1,0 +1,45 @@
+{
+  "task_id": "P1.5b",
+  "git_commit": "89777638d77d51424f909bf5cb40d3463afe1f43",
+  "git_dirty": false,
+  "timestamp_utc": {
+    "start": "2026-10-22T23:07:17.035317Z",
+    "end": "2026-10-22T23:10:59.330091Z"
+  },
+  "seed": 0,
+  "config": {
+    "task_id": "P1.5b",
+    "seed": 0,
+    "gpu": "A100",
+    "mapping_passed": true,
+    "verified_sha256": "e79ff7b25ef2534c739c33d4e980140a85b303ab450ab85469ad3630a8b518f7",
+    "hard_ce_threshold": 1.0
+  },
+  "versions": {
+    "python": "3.11.15",
+    "torch": "2.14.1",
+    "transformers": "5.20.2"
+  },
+  "hostname": "Mac",
+  "device": {
+    "type": "cuda",
+    "name": "NVIDIA A100-SXM4-40GB",
+    "index": 0
+  },
+  "precision": {
+    "cuda_matmul_allow_tf32": false,
+    "cudnn_allow_tf32": false,
+    "float32_matmul_precision": "highest"
+  },
+  "outputs": [
+    "results/P1.5b/summary.json",
+    "results/P1.5b/hard_rows.jsonl",
+    "results/P1.5b/notes.md",
+    "results/P1.5b/examples.md",
+    "results/P1.5b/pool_summary.json"
+  ],
+  "model_info": {
+    "name": "EleutherAI/pythia-410m-deduped",
+    "final_revision": "step143000"
+  }
+}

@@ -1,0 +1,46 @@
+{
+  "seed": 0,
+  "epoch1": {
+    "deduped_pile_tokens": 207000000000,
+    "packed_seq_len": 2049,
+    "n_sequences_one_epoch": 101024890,
+    "fraction": 0.95,
+    "index_cutoff": 95973645,
+    "step_cutoff": 93724,
+    "derivation": "floor(207000000000 / 2049) = 101024890; cutoff = floor(0.95 * 101024890) = 95973645"
+  },
+  "k_primary_dataset": {
+    "dataset_id": "usvsnsp/deduped-num-duplicates",
+    "revision": "b905c09d5e1e0ec81ff5318d66e81436dce50bc0",
+    "parquet": "data/train-00000-of-00001-a51cc17920038302.parquet",
+    "definition": "Exact duplicate count of each 32-token (GPT-NeoX) training window in the near-deduplicated Pile; Index == Pile sequence id. Released with EleutherAI/semantic-memorization (commit 84ab8c0289f0f74b4b1edd99ba7d2bea8d58a6a2).",
+    "corpus": "Pile near-deduplicated (Pythia-deduped training corpus)",
+    "window_tokens": 32,
+    "match_type": "exact"
+  },
+  "memorized_meta": {
+    "dataset_id": "EleutherAI/pythia-memorized-evals",
+    "split": "deduped.410m",
+    "revision": "d97edd12f08884dae3dfcef8d5cbbba5129e49e0",
+    "n_rows": 811039
+  },
+  "filter_counts": {
+    "n_full_memorized": 811039,
+    "n_k_primary_1": 131490,
+    "n_epoch1": 86087,
+    "n_step_ge_10000": 77065,
+    "n_trivial_removed": 2302,
+    "n_template_removed": 6565,
+    "n_candidates_after_filters": 68198,
+    "n_sampled": 20000,
+    "max_sample": 20000
+  },
+  "template_commit": "84ab8c0289f0f74b4b1edd99ba7d2bea8d58a6a2",
+  "huffman_threshold": 2.5,
+  "min_step": 10000,
+  "step_range_sampled": {
+    "min": 10003,
+    "max": 93723
+  },
+  "candidates_path": "data/P1.5b/candidates.jsonl"
+}
