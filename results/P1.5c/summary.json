@@ -1,0 +1,48 @@
+{
+  "val_source": {
+    "dataset_id": "pietrolesci/pile-validation",
+    "split": "validation",
+    "column": "text",
+    "n_docs_scanned": 29977,
+    "n_windows_pool": 150610,
+    "n_sampled": 50000,
+    "note": "pietrolesci/pile-validation \u2014 Pile validation split; Pythia authors confirmed it was not seen during training (dataset card)."
+  },
+  "model": "EleutherAI/pythia-410m-deduped",
+  "revision": "step143000",
+  "n_windows": 50000,
+  "exact_match": {
+    "count": 1,
+    "n": 50000,
+    "rate": 2e-05,
+    "ci95_low": 3.5304090094471416e-06,
+    "ci95_high": 0.00011329261524395344
+  },
+  "nontrivial_nontemplate": {
+    "count": 50000,
+    "n": 50000,
+    "rate": 1.0,
+    "ci95_low": 0.9999231739027027,
+    "ci95_high": 1.0
+  },
+  "exact_match_after_filters": {
+    "count": 1,
+    "n": 50000,
+    "rate": 2e-05,
+    "ci95_low": 3.5304090094471416e-06,
+    "ci95_high": 0.00011329261524395344
+  },
+  "exact_match_rate_within_filtered": {
+    "count": 1,
+    "n": 50000,
+    "rate": 2e-05,
+    "ci95_low": 3.5304090094471416e-06,
+    "ci95_high": 0.00011329261524395344
+  },
+  "template_commit": "84ab8c0289f0f74b4b1edd99ba7d2bea8d58a6a2",
+  "huffman_threshold": 2.5,
+  "gpu_hours": 1.001159349806111,
+  "wall_clock_s": 501.1383204581216,
+  "gpu_requested": "A100",
+  "decoding": "autoregressive greedy (Biderman memorized-evals / P1.2-style)"
+}
