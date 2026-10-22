@@ -48,20 +48,39 @@ def count_ngram(
     if path.exists():
         return json.loads(path.read_text())
 
-    global _last_request_mono
-    with _throttle_lock:
-        elapsed = time.monotonic() - _last_request_mono
-        if elapsed < min_interval_s:
-            time.sleep(min_interval_s - elapsed)
-        _last_request_mono = time.monotonic()
-
     payload = {"index": index, "query_type": "count", "query": query}
-    resp = requests.post(API_URL, json=payload, timeout=timeout_s)
-    resp.raise_for_status()
-    data = resp.json()
-    data["_meta"] = {"index": index, "query": query}
-    path.write_text(json.dumps(data))
-    return data
+    max_attempts = 8
+    last_err: Exception | None = None
+    for attempt in range(max_attempts):
+        global _last_request_mono
+        with _throttle_lock:
+            elapsed = time.monotonic() - _last_request_mono
+            if elapsed < min_interval_s:
+                time.sleep(min_interval_s - elapsed)
+            _last_request_mono = time.monotonic()
+
+        try:
+            resp = requests.post(API_URL, json=payload, timeout=timeout_s)
+            if resp.status_code in {403, 429, 500, 502, 503, 504}:
+                wait = min(120.0, (2**attempt) * 2.0)
+                time.sleep(wait)
+                last_err = requests.HTTPError(
+                    f"{resp.status_code} for {API_URL} (attempt {attempt + 1})",
+                    response=resp,
+                )
+                continue
+            resp.raise_for_status()
+            data = resp.json()
+            data["_meta"] = {"index": index, "query": query}
+            tmp = path.with_suffix(".json.tmp")
+            tmp.write_text(json.dumps(data))
+            tmp.replace(path)
+            return data
+        except (requests.Timeout, requests.ConnectionError) as exc:
+            last_err = exc
+            time.sleep(min(120.0, (2**attempt) * 2.0))
+    assert last_err is not None
+    raise last_err
 
 
 def stratum_for_k(k: int) -> str:
