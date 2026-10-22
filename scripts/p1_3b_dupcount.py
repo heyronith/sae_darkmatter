@@ -3,6 +3,7 @@
 
 from __future__ import annotations
 
+import argparse
 import csv
 import json
 import sys
@@ -40,7 +41,7 @@ LLAMA_NAME = "NousResearch/Llama-2-7b-hf"
 PILOT_N = 500
 BOILERPLATE_N = 10
 NEGATIVE_N = 50
-MIN_INTERVAL_S = 0.35
+MIN_INTERVAL_S = 1.0
 BOILERPLATE_NEEDLES = (
     "redistribute",
     "license",
@@ -314,7 +315,83 @@ def run_validation(
     return validation
 
 
+def _load_partial_rows(path: Path) -> dict[int, dict]:
+    if not path.exists():
+        return {}
+    out: dict[int, dict] = {}
+    for line in path.read_text().splitlines():
+        if not line.strip():
+            continue
+        row = json.loads(line)
+        out[int(row["sample_row"])] = row
+    return out
+
+
+def _write_summary(
+    *,
+    rows: list[dict],
+    n: int,
+    meta: dict,
+    validation: dict,
+    out_dir: Path,
+) -> Path:
+    non_trivial = [r for r in rows if not r["trivial"]]
+    summary = summarize_counts([r["k_primary"] for r in non_trivial])
+    trivial_by_stratum = {"unmatched": 0, "low": 0, "mid": 0, "high": 0}
+    for r in rows:
+        if r["trivial"]:
+            trivial_by_stratum[stratum_for_k(r["k_primary"])] += 1
+    summary.update(
+        {
+            "k_primary_source": meta["deduped"],
+            "k_full_pile_source": meta["duped"],
+            "infgram_index": PRIMARY_INDEX,
+            "n_total": n,
+            "n_trivial": sum(1 for r in rows if r["trivial"]),
+            "trivial_by_stratum": trivial_by_stratum,
+            "n_crosses_doc_boundary": sum(1 for r in rows if r["crosses_doc_boundary"]),
+            "n_unmatched_nontrivial": sum(
+                1 for r in non_trivial if r["stratum"] == "unmatched"
+            ),
+            "strata_note": (
+                "Strata computed on non-trivial sequences using k_primary "
+                "(deduped 32-gram exact counts). unmatched = k_primary==0 "
+                "(excluded from analysis)."
+            ),
+            "validation": {
+                k: validation[k]
+                for k in (
+                    "pilot_n",
+                    "zero_rate_infgram",
+                    "zero_rate_primary",
+                    "boilerplate_primary_ge_100",
+                    "boilerplate_infgram_ge_100",
+                    "negative_zeros",
+                    "spearman_primary_vs_infgram",
+                    "passed",
+                )
+            },
+        }
+    )
+    summary_path = out_dir / "counts_summary.json"
+    summary_path.write_text(json.dumps(summary, indent=2) + "\n")
+    return summary_path
+
+
 def main() -> None:
+    parser = argparse.ArgumentParser(description=__doc__)
+    parser.add_argument(
+        "--skip-validation",
+        action="store_true",
+        help="Reuse results/P1.3b/validation.json if it already passed",
+    )
+    parser.add_argument(
+        "--resume",
+        action="store_true",
+        help="Resume full run from data/P1.3b/counts.jsonl + API cache",
+    )
+    args = parser.parse_args()
+
     started_at = datetime.now(UTC)
     set_seed(SEED)
     rng = np.random.default_rng(SEED)
@@ -344,94 +421,78 @@ def main() -> None:
     cache_dir = data_dir() / "P1.3b" / "infini_gram_ids_cache"
     cache_dir.mkdir(parents=True, exist_ok=True)
 
-    validation = run_validation(sample, k_primary, neox_tok, llama_tok, cache_dir, rng)
-    (out_dir / "validation.json").write_text(json.dumps(validation, indent=2) + "\n")
-    (out_dir / "notes.md").write_text(_notes_md(meta, validation))
-
-    if not validation["passed"]:
-        print("VALIDATION FAILED:", validation["failed_checks"])
-        print("Stopping before full run. See results/P1.3b/validation.json")
-        write_manifest(
-            task_id=TASK_ID,
-            config={"task_id": TASK_ID, "stage": "validation_failed", "seed": SEED},
-            seed=SEED,
-            out_dir=out_dir,
-            outputs=[
-                str((out_dir / "validation.json").relative_to(REPO_ROOT)),
-                str((out_dir / "notes.md").relative_to(REPO_ROOT)),
-            ],
-            started_at=started_at,
-            ended_at=datetime.now(UTC),
-            allow_dirty=False,
+    validation_path = out_dir / "validation.json"
+    if args.skip_validation and validation_path.exists():
+        validation = json.loads(validation_path.read_text())
+        if not validation.get("passed"):
+            raise RuntimeError(
+                "Existing validation.json did not pass; "
+                "re-run without --skip-validation"
+            )
+        print("Skipping validation (reusing passed validation.json)")
+        (out_dir / "notes.md").write_text(_notes_md(meta, validation))
+    else:
+        validation = run_validation(
+            sample, k_primary, neox_tok, llama_tok, cache_dir, rng
         )
-        sys.exit(2)
+        validation_path.write_text(json.dumps(validation, indent=2) + "\n")
+        (out_dir / "notes.md").write_text(_notes_md(meta, validation))
+        if not validation["passed"]:
+            print("VALIDATION FAILED:", validation["failed_checks"])
+            print("Stopping before full run. See results/P1.3b/validation.json")
+            write_manifest(
+                task_id=TASK_ID,
+                config={"task_id": TASK_ID, "stage": "validation_failed", "seed": SEED},
+                seed=SEED,
+                out_dir=out_dir,
+                outputs=[
+                    str(validation_path.relative_to(REPO_ROOT)),
+                    str((out_dir / "notes.md").relative_to(REPO_ROOT)),
+                ],
+                started_at=started_at,
+                ended_at=datetime.now(UTC),
+                allow_dirty=False,
+            )
+            sys.exit(2)
 
     print("Validation passed. Full 20k run...")
-    rows: list[dict] = []
-    for i in range(n):
-        tokens = sample.column("tokens")[i].as_py()
-        ig = _infgram_for_tokens(neox_tok, llama_tok, tokens, cache_dir)
-        kp = int(k_primary[i])
-        row = {
-            "sample_row": i,
-            "pile_index": int(pile_idx[i]),
-            "k_primary": kp,
-            "k_full_pile_precomputed": int(k_full[i]),
-            "stratum": stratum_for_k(kp),
-            **ig,
-        }
-        rows.append(row)
-        if (i + 1) % 500 == 0 or i + 1 == n:
-            print(f"[{i + 1}/{n}] k_p={kp} k_ig={ig['k_infgram']}")
-
-    non_trivial = [r for r in rows if not r["trivial"]]
-    ks_nt = [r["k_primary"] for r in non_trivial]
-    summary = summarize_counts(ks_nt)
-    trivial_by_stratum = {"unmatched": 0, "low": 0, "mid": 0, "high": 0}
-    for r in rows:
-        if r["trivial"]:
-            trivial_by_stratum[stratum_for_k(r["k_primary"])] += 1
-    boundary_n = sum(1 for r in rows if r["crosses_doc_boundary"])
-    unmatched_n = sum(1 for r in non_trivial if r["stratum"] == "unmatched")
-    summary.update(
-        {
-            "k_primary_source": meta["deduped"],
-            "k_full_pile_source": meta["duped"],
-            "infgram_index": PRIMARY_INDEX,
-            "n_total": n,
-            "n_trivial": sum(1 for r in rows if r["trivial"]),
-            "trivial_by_stratum": trivial_by_stratum,
-            "n_crosses_doc_boundary": boundary_n,
-            "n_unmatched_nontrivial": unmatched_n,
-            "strata_note": (
-                "Strata computed on non-trivial sequences using k_primary "
-                "(deduped 32-gram exact counts). unmatched = k_primary==0 "
-                "(excluded from analysis)."
-            ),
-            "validation": {
-                k: validation[k]
-                for k in (
-                    "pilot_n",
-                    "zero_rate_infgram",
-                    "zero_rate_primary",
-                    "boilerplate_primary_ge_100",
-                    "boilerplate_infgram_ge_100",
-                    "negative_zeros",
-                    "spearman_primary_vs_infgram",
-                    "passed",
-                )
-            },
-        }
-    )
-
-    summary_path = out_dir / "counts_summary.json"
-    summary_path.write_text(json.dumps(summary, indent=2) + "\n")
-
     full_path = data_dir() / "P1.3b" / "counts.jsonl"
     full_path.parent.mkdir(parents=True, exist_ok=True)
-    with full_path.open("w") as f:
-        for row in rows:
+    existing = _load_partial_rows(full_path) if args.resume else {}
+    if existing:
+        print(f"Resuming with {len(existing)}/{n} rows already written")
+
+    rows: list[dict] = [existing[i] for i in range(len(existing))]
+    # Ensure list is contiguous from 0; if resume has holes, rebuild from map.
+    if existing and (len(existing) != max(existing) + 1 if existing else True):
+        # Fall through to fill missing indices in order.
+        pass
+
+    with full_path.open("a" if existing else "w") as f:
+        for i in range(n):
+            if i in existing:
+                continue
+            tokens = sample.column("tokens")[i].as_py()
+            ig = _infgram_for_tokens(neox_tok, llama_tok, tokens, cache_dir)
+            kp = int(k_primary[i])
+            row = {
+                "sample_row": i,
+                "pile_index": int(pile_idx[i]),
+                "k_primary": kp,
+                "k_full_pile_precomputed": int(k_full[i]),
+                "stratum": stratum_for_k(kp),
+                **ig,
+            }
+            existing[i] = row
             f.write(json.dumps(row) + "\n")
+            f.flush()
+            if (i + 1) % 100 == 0 or i + 1 == n:
+                print(f"[{i + 1}/{n}] k_p={kp} k_ig={ig['k_infgram']}", flush=True)
+
+    rows = [existing[i] for i in range(n)]
+    summary_path = _write_summary(
+        rows=rows, n=n, meta=meta, validation=validation, out_dir=out_dir
+    )
 
     csv_path = out_dir / "examples_200.csv"
     with csv_path.open("w", newline="") as f:
@@ -471,7 +532,7 @@ def main() -> None:
         started_at=started_at,
         ended_at=ended_at,
     )
-    print(json.dumps(summary["strata"], indent=2))
+    print(json.dumps(json.loads(summary_path.read_text())["strata"], indent=2))
     print(f"Wrote {summary_path}")
 
 

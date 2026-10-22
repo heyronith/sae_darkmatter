@@ -36,6 +36,7 @@ TRIVIAL_WHITESPACE_FRAC = 0.5
 
 _throttle_lock = threading.Lock()
 _last_request_mono = 0.0
+_adaptive_interval_s = 0.0
 
 
 def precomputed_dataset_meta() -> dict[str, Any]:
@@ -108,23 +109,27 @@ def count_ngram_ids(
         "query_type": "count",
         "query_ids": query_ids,
     }
-    max_attempts = 12
+    max_attempts = 16
     last_err: Exception | None = None
     for attempt in range(max_attempts):
-        global _last_request_mono
+        global _last_request_mono, _adaptive_interval_s
         with _throttle_lock:
+            need = max(min_interval_s, _adaptive_interval_s)
             elapsed = time.monotonic() - _last_request_mono
-            if elapsed < min_interval_s:
-                time.sleep(min_interval_s - elapsed)
+            if elapsed < need:
+                time.sleep(need - elapsed)
             _last_request_mono = time.monotonic()
 
         try:
             resp = requests.post(API_URL, json=payload, timeout=timeout_s)
             if resp.status_code in {403, 429, 500, 502, 503, 504}:
-                wait = min(300.0, (2**attempt) * 3.0)
+                wait = min(300.0, (2**attempt) * 5.0)
+                # Slow the steady-state cadence after rate limits.
+                _adaptive_interval_s = min(5.0, max(_adaptive_interval_s, 1.5) * 1.25)
                 print(
                     f"infini-gram {resp.status_code}; sleeping {wait:.0f}s "
-                    f"(attempt {attempt + 1}/{max_attempts})",
+                    f"(attempt {attempt + 1}/{max_attempts}, "
+                    f"cadence→{_adaptive_interval_s:.1f}s)",
                     flush=True,
                 )
                 time.sleep(wait)
@@ -139,10 +144,12 @@ def count_ngram_ids(
             tmp = path.with_suffix(".json.tmp")
             tmp.write_text(json.dumps(data))
             tmp.replace(path)
+            # Decay adaptive throttle on success.
+            _adaptive_interval_s = max(0.0, _adaptive_interval_s * 0.9)
             return data
         except (requests.Timeout, requests.ConnectionError) as exc:
             last_err = exc
-            time.sleep(min(300.0, (2**attempt) * 3.0))
+            time.sleep(min(300.0, (2**attempt) * 5.0))
     assert last_err is not None
     raise last_err
 
