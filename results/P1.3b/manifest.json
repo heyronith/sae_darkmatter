@@ -1,0 +1,37 @@
+{
+  "task_id": "P1.3b",
+  "git_commit": "ee293a42747274e47f53789d23e681edb4d03c37",
+  "git_dirty": false,
+  "timestamp_utc": {
+    "start": "2026-10-22T14:06:02.741054Z",
+    "end": "2026-10-22T19:25:45.420323Z"
+  },
+  "seed": 0,
+  "config": {
+    "task_id": "P1.3b",
+    "seed": 0,
+    "k_primary_dataset": "usvsnsp/deduped-num-duplicates",
+    "infgram_index": "v4_piletrain_llama"
+  },
+  "versions": {
+    "python": "3.11.15",
+    "torch": "2.14.1",
+    "transformers": "5.20.2"
+  },
+  "hostname": "Ronnys-MacBook-Air.local",
+  "device": {
+    "type": "cpu",
+    "name": null
+  },
+  "precision": {
+    "cuda_matmul_allow_tf32": false,
+    "cudnn_allow_tf32": false,
+    "float32_matmul_precision": "highest"
+  },
+  "outputs": [
+    "results/P1.3b/counts_summary.json",
+    "results/P1.3b/examples_200.csv",
+    "results/P1.3b/notes.md",
+    "results/P1.3b/validation.json"
+  ]
+}

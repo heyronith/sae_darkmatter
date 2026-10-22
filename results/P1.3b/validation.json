@@ -1,0 +1,131 @@
+{
+  "pilot_n": 500,
+  "zero_rate_infgram": 0.0,
+  "zero_rate_primary": 0.0,
+  "zero_rate_ok": true,
+  "zero_examples": [],
+  "boilerplate_n": 10,
+  "boilerplate_primary_ge_100": 10,
+  "boilerplate_infgram_ge_100": 10,
+  "boilerplate_ok": true,
+  "boilerplate": [
+    {
+      "sample_row": 12252,
+      "k_primary": 4222674,
+      "k_infgram": 5799370,
+      "text_preview": "minimal}\n                \\usepackage{amsmath}\n                \\usepackage{wasysym} \n                \\usepackage{amsfonts} \n                \\usepackage{amssymb} "
+    },
+    {
+      "sample_row": 11140,
+      "k_primary": 4222674,
+      "k_infgram": 5799370,
+      "text_preview": "minimal}\n                \\usepackage{amsmath}\n                \\usepackage{wasysym} \n                \\usepackage{amsfonts} \n                \\usepackage{amssymb} "
+    },
+    {
+      "sample_row": 9763,
+      "k_primary": 4222674,
+      "k_infgram": 5799370,
+      "text_preview": "minimal}\n                \\usepackage{amsmath}\n                \\usepackage{wasysym} \n                \\usepackage{amsfonts} \n                \\usepackage{amssymb} "
+    },
+    {
+      "sample_row": 9977,
+      "k_primary": 4222674,
+      "k_infgram": 5799370,
+      "text_preview": "minimal}\n                \\usepackage{amsmath}\n                \\usepackage{wasysym} \n                \\usepackage{amsfonts} \n                \\usepackage{amssymb} "
+    },
+    {
+      "sample_row": 18502,
+      "k_primary": 4222674,
+      "k_infgram": 5799370,
+      "text_preview": "minimal}\n                \\usepackage{amsmath}\n                \\usepackage{wasysym} \n                \\usepackage{amsfonts} \n                \\usepackage{amssymb} "
+    },
+    {
+      "sample_row": 4639,
+      "k_primary": 4222674,
+      "k_infgram": 5799370,
+      "text_preview": "minimal}\n                \\usepackage{amsmath}\n                \\usepackage{wasysym} \n                \\usepackage{amsfonts} \n                \\usepackage{amssymb} "
+    },
+    {
+      "sample_row": 2797,
+      "k_primary": 4222674,
+      "k_infgram": 5799370,
+      "text_preview": "minimal}\n                \\usepackage{amsmath}\n                \\usepackage{wasysym} \n                \\usepackage{amsfonts} \n                \\usepackage{amssymb} "
+    },
+    {
+      "sample_row": 16483,
+      "k_primary": 4222674,
+      "k_infgram": 5799370,
+      "text_preview": "minimal}\n                \\usepackage{amsmath}\n                \\usepackage{wasysym} \n                \\usepackage{amsfonts} \n                \\usepackage{amssymb} "
+    },
+    {
+      "sample_row": 13894,
+      "k_primary": 4222674,
+      "k_infgram": 5799370,
+      "text_preview": "minimal}\n                \\usepackage{amsmath}\n                \\usepackage{wasysym} \n                \\usepackage{amsfonts} \n                \\usepackage{amssymb} "
+    },
+    {
+      "sample_row": 11270,
+      "k_primary": 4222674,
+      "k_infgram": 5799370,
+      "text_preview": "minimal}\n                \\usepackage{amsmath}\n                \\usepackage{wasysym} \n                \\usepackage{amsfonts} \n                \\usepackage{amssymb} "
+    }
+  ],
+  "negative_n": 50,
+  "negative_zeros": 50,
+  "negative_ok": true,
+  "spearman_primary_vs_infgram": 0.42660740259895924,
+  "huge_k_examples": [
+    {
+      "sample_row": 12252,
+      "k_primary": 4222674,
+      "text": "minimal}\n                \\usepackage{amsmath}\n                \\usepackage{wasysym} \n                \\usepackage{amsfonts} \n                \\usepackage{amssymb} \n                \\usepackage{amsbsy}\n   "
+    },
+    {
+      "sample_row": 11140,
+      "k_primary": 4222674,
+      "text": "minimal}\n                \\usepackage{amsmath}\n                \\usepackage{wasysym} \n                \\usepackage{amsfonts} \n                \\usepackage{amssymb} \n                \\usepackage{amsbsy}\n   "
+    },
+    {
+      "sample_row": 9763,
+      "k_primary": 4222674,
+      "text": "minimal}\n                \\usepackage{amsmath}\n                \\usepackage{wasysym} \n                \\usepackage{amsfonts} \n                \\usepackage{amssymb} \n                \\usepackage{amsbsy}\n   "
+    },
+    {
+      "sample_row": 9977,
+      "k_primary": 4222674,
+      "text": "minimal}\n                \\usepackage{amsmath}\n                \\usepackage{wasysym} \n                \\usepackage{amsfonts} \n                \\usepackage{amssymb} \n                \\usepackage{amsbsy}\n   "
+    },
+    {
+      "sample_row": 18502,
+      "k_primary": 4222674,
+      "text": "minimal}\n                \\usepackage{amsmath}\n                \\usepackage{wasysym} \n                \\usepackage{amsfonts} \n                \\usepackage{amssymb} \n                \\usepackage{amsbsy}\n   "
+    },
+    {
+      "sample_row": 4639,
+      "k_primary": 4222674,
+      "text": "minimal}\n                \\usepackage{amsmath}\n                \\usepackage{wasysym} \n                \\usepackage{amsfonts} \n                \\usepackage{amssymb} \n                \\usepackage{amsbsy}\n   "
+    },
+    {
+      "sample_row": 2797,
+      "k_primary": 4222674,
+      "text": "minimal}\n                \\usepackage{amsmath}\n                \\usepackage{wasysym} \n                \\usepackage{amsfonts} \n                \\usepackage{amssymb} \n                \\usepackage{amsbsy}\n   "
+    },
+    {
+      "sample_row": 16483,
+      "k_primary": 4222674,
+      "text": "minimal}\n                \\usepackage{amsmath}\n                \\usepackage{wasysym} \n                \\usepackage{amsfonts} \n                \\usepackage{amssymb} \n                \\usepackage{amsbsy}\n   "
+    },
+    {
+      "sample_row": 13894,
+      "k_primary": 4222674,
+      "text": "minimal}\n                \\usepackage{amsmath}\n                \\usepackage{wasysym} \n                \\usepackage{amsfonts} \n                \\usepackage{amssymb} \n                \\usepackage{amsbsy}\n   "
+    },
+    {
+      "sample_row": 11270,
+      "k_primary": 4222674,
+      "text": "minimal}\n                \\usepackage{amsmath}\n                \\usepackage{wasysym} \n                \\usepackage{amsfonts} \n                \\usepackage{amssymb} \n                \\usepackage{amsbsy}\n   "
+    }
+  ],
+  "failed_checks": [],
+  "passed": true
+}
