@@ -25,7 +25,7 @@ uv run python scripts/smoke_pythia.py
 ```bash
 # Regenerate Modal image deps whenever uv.lock changes:
 uv export --no-dev --no-hashes --format requirements-txt --no-emit-project > modal_jobs/requirements.lock
-modal run modal_jobs/hello_gpu.py
+uv run modal run modal_jobs/hello_gpu.py
 ```
 
 ## Conventions
