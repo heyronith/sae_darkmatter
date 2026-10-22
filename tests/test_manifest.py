@@ -93,3 +93,25 @@ def test_explicit_git_overrides(tmp_path: Path) -> None:
     data = json.loads(path.read_text())
     assert data["git_commit"] == "c" * 40
     assert data["git_dirty"] is True
+
+
+def test_device_and_precision_overrides_used_verbatim(tmp_path: Path) -> None:
+    device = {"type": "cuda", "name": "NVIDIA A100-SXM4-80GB", "index": 0}
+    precision = {
+        "cuda_matmul_allow_tf32": False,
+        "cudnn_allow_tf32": False,
+        "float32_matmul_precision": "highest",
+    }
+    path = write_manifest(
+        task_id="P0.4b",
+        config={"x": 1},
+        seed=0,
+        out_dir=tmp_path,
+        git_commit="d" * 40,
+        git_dirty=False,
+        device=device,
+        precision=precision,
+    )
+    data = json.loads(path.read_text())
+    assert data["device"] == device
+    assert data["precision"] == precision

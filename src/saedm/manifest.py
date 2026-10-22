@@ -82,11 +82,16 @@ def write_manifest(
     allow_dirty: bool = False,
     git_commit: str | None = None,
     git_dirty: bool | None = None,
+    device: Mapping[str, Any] | None = None,
+    precision: Mapping[str, Any] | None = None,
 ) -> Path:
     """Write results/<task_id>/manifest.json and return its path.
 
     If ``git_commit`` / ``git_dirty`` are provided (e.g. Modal has no ``.git``),
     they are used as-is. Otherwise git is queried, ignoring ``results/``.
+
+    Remote jobs must pass ``device`` / ``precision`` from the container so the
+    local entrypoint never records the laptop's hardware/flags.
     """
     task_dir = Path(out_dir) if out_dir is not None else results_dir() / task_id
     task_dir.mkdir(parents=True, exist_ok=True)
@@ -125,8 +130,8 @@ def write_manifest(
             "transformers": transformers.__version__,
         },
         "hostname": platform.node(),
-        "device": _device_info(),
-        "precision": _precision_info(),
+        "device": dict(device) if device is not None else _device_info(),
+        "precision": dict(precision) if precision is not None else _precision_info(),
         "outputs": list(outputs or []),
     }
     if model_info is not None:

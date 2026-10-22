@@ -34,3 +34,4 @@ uv run modal run modal_jobs/hello_gpu.py
 - Outputs live in `results/<task-id>/` and always include `manifest.json`.
 - Large artifacts (weights, caches, data) never go in git; `data/` is gitignored.
 - **Commit code first, then produce results from a clean tree, then commit results in a second commit with the same task ID.** `write_manifest` refuses dirty code (ignoring `results/`) unless `allow_dirty=True`.
+- **Paired comparisons (baseline vs intervention) always run on the same device in the same job. Never compare numbers across devices.**

@@ -156,6 +156,12 @@ def main(gpu: str = DEFAULT_GPU, seed: int = 0) -> None:
         model_info=result["model_info"],
         git_commit=git_commit,
         git_dirty=git_dirty,
+        device={
+            "type": "cuda",
+            "name": result["gpu_name"],
+            "index": 0,
+        },
+        precision=result["precision"],
     )
 
     print("GPU top-5:")

@@ -39,11 +39,15 @@ def load_model(
     revision: str,
     dtype: str = "float32",
     device: str = "cpu",
+    attn_implementation: str = "eager",
 ) -> tuple[Any, Any, dict[str, Any]]:
     """Load a causal LM and tokenizer with an explicit dtype and revision.
 
     revision is required (no default). After load, every parameter must match
     the requested dtype or an AssertionError is raised.
+
+    Default ``attn_implementation="eager"`` keeps attention patterns accessible
+    and avoids SDPA numeric differences.
     """
     dtype_name, torch_dtype = _resolve_dtype(dtype)
 
@@ -52,6 +56,7 @@ def load_model(
         name,
         revision=revision,
         dtype=torch_dtype,
+        attn_implementation=attn_implementation,
     )
     model.to(device=device)
     model.eval()
@@ -83,6 +88,7 @@ def load_model(
         "resolved_commit_sha": commit or "unknown",
         "dtype": dtype_name,
         "device": device,
+        "attn_implementation": attn_implementation,
         "n_layers": int(config.num_hidden_layers),
         "d_model": int(config.hidden_size),
     }
