@@ -1,10 +1,10 @@
 {
   "task_id": "P0.2",
-  "git_commit": "f603d08fdd55da03041aa398b528a9593b642324",
-  "git_dirty": true,
+  "git_commit": "fb6df57cfe573e9fd3e58514f697347d63d9f41c",
+  "git_dirty": false,
   "timestamp_utc": {
-    "start": "2026-10-22T02:07:43.745554Z",
-    "end": "2026-10-22T02:07:44.399791Z"
+    "start": "2026-10-22T03:26:37.802901Z",
+    "end": "2026-10-22T03:26:38.422996Z"
   },
   "seed": 0,
   "config": {
@@ -24,6 +24,11 @@
   "device": {
     "type": "cpu",
     "name": null
+  },
+  "precision": {
+    "cuda_matmul_allow_tf32": false,
+    "cudnn_allow_tf32": false,
+    "float32_matmul_precision": "highest"
   },
   "outputs": [
     "results/P0.2/smoke.json",
