@@ -13,13 +13,14 @@ class _ToyModel:
     """Logits that prefer next = last+1 (matches ``list(range(64))`` windows)."""
 
     def __call__(self, input_ids: torch.Tensor) -> SimpleNamespace:
-        _b, t = input_ids.shape
+        b, t = input_ids.shape
         v = max(int(input_ids.max().item()) + 5, 70)
-        logits = torch.zeros(1, t, v)
-        for i in range(t):
-            nxt = int(input_ids[0, i].item()) + 1
-            if nxt < v:
-                logits[0, i, nxt] = 10.0
+        logits = torch.zeros(b, t, v)
+        for bi in range(b):
+            for i in range(t):
+                nxt = int(input_ids[bi, i].item()) + 1
+                if nxt < v:
+                    logits[bi, i, nxt] = 10.0
         return SimpleNamespace(logits=logits)
 
 
@@ -42,3 +43,17 @@ def test_greedy_exact_match_on_toy() -> None:
     out = greedy_continuation_exact_match(_ToyModel(), tokens, device="cpu")
     assert out["exact_match"] is True
     assert out["n_match"] == 32
+
+
+def test_greedy_batch_matches_single() -> None:
+    from saedm.loss import (
+        greedy_continuation_exact_match,
+        greedy_continuation_exact_match_batch,
+    )
+
+    batch = [list(range(64)), list(range(10, 74)), list(range(5, 69))]
+    model = _ToyModel()
+    batched = greedy_continuation_exact_match_batch(model, batch, device="cpu")
+    for tokens, got in zip(batch, batched, strict=True):
+        single = greedy_continuation_exact_match(model, tokens, device="cpu")
+        assert got == single

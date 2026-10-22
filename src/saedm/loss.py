@@ -58,27 +58,52 @@ def greedy_continuation_exact_match(
     Prompt = ``token_ids[:prompt_len]``; generate ``cont_len`` tokens with
     argmax at each step; exact match iff generated == ``token_ids[prompt_len:]``.
     """
-    if len(token_ids) < prompt_len + cont_len:
-        raise ValueError(
-            f"need >= {prompt_len + cont_len} tokens, got {len(token_ids)}"
-        )
-    prompt = list(token_ids[:prompt_len])
-    target = list(token_ids[prompt_len : prompt_len + cont_len])
-    ids = torch.tensor([prompt], dtype=torch.long, device=device)
-    generated: list[int] = []
+    return greedy_continuation_exact_match_batch(
+        model,
+        [token_ids],
+        device=device,
+        prompt_len=prompt_len,
+        cont_len=cont_len,
+    )[0]
+
+
+def greedy_continuation_exact_match_batch(
+    model: Any,
+    token_ids_batch: list[list[int]],
+    *,
+    device: str | torch.device = "cpu",
+    prompt_len: int = PROMPT_LEN,
+    cont_len: int = CONT_LEN,
+) -> list[dict[str, Any]]:
+    """Batched AR greedy; per-row identical to ``greedy_continuation_exact_match``."""
+    if not token_ids_batch:
+        return []
+    need = prompt_len + cont_len
+    for token_ids in token_ids_batch:
+        if len(token_ids) < need:
+            raise ValueError(f"need >= {need} tokens, got {len(token_ids)}")
+    prompts = [list(t[:prompt_len]) for t in token_ids_batch]
+    targets = [list(t[prompt_len:need]) for t in token_ids_batch]
+    ids = torch.tensor(prompts, dtype=torch.long, device=device)
+    # generated_steps[step][batch]
+    generated_steps: list[torch.Tensor] = []
     with torch.no_grad():
         for _ in range(cont_len):
-            logits = model(input_ids=ids).logits[0, -1]
-            next_id = int(logits.argmax(dim=-1).item())
-            generated.append(next_id)
-            ids = torch.cat(
-                [ids, torch.tensor([[next_id]], dtype=torch.long, device=device)],
-                dim=1,
-            )
-    n_match = sum(int(a == b) for a, b in zip(generated, target, strict=True))
-    return {
-        "exact_match": generated == target,
-        "n_match": n_match,
-        "generated": generated,
-        "target": target,
-    }
+            logits = model(input_ids=ids).logits[:, -1, :]
+            next_ids = logits.argmax(dim=-1)
+            generated_steps.append(next_ids)
+            ids = torch.cat([ids, next_ids.unsqueeze(1)], dim=1)
+    gen_mat = torch.stack(generated_steps, dim=1)  # [B, cont_len]
+    out: list[dict[str, Any]] = []
+    for i, target in enumerate(targets):
+        generated = [int(x) for x in gen_mat[i].tolist()]
+        n_match = sum(int(a == b) for a, b in zip(generated, target, strict=True))
+        out.append(
+            {
+                "exact_match": generated == target,
+                "n_match": n_match,
+                "generated": generated,
+                "target": target,
+            }
+        )
+    return out

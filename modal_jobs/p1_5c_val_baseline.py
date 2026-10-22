@@ -37,7 +37,12 @@ def _sample_windows_local(n: int, seed: int) -> tuple[list[dict], dict]:
     from saedm.data.memorized import SEQ_LEN
 
     tok = AutoTokenizer.from_pretrained(MODEL, revision=REVISION)
-    ds = load_dataset(VAL_DATASET, split="validation")
+    # Hub card lists a mismatched split name; force validation without checks.
+    ds = load_dataset(
+        VAL_DATASET,
+        split="validation",
+        verification_mode="no_checks",
+    )
     # Column name: try common fields.
     col = "text" if "text" in ds.column_names else ds.column_names[0]
     rng = np.random.default_rng(seed)
@@ -110,7 +115,7 @@ def greedy_match_batch(payload: dict) -> dict:
     """Autoregressive greedy exact-match on a batch of 64-token windows."""
     import torch
 
-    from saedm.loss import greedy_continuation_exact_match
+    from saedm.loss import greedy_continuation_exact_match_batch
     from saedm.models import load_model
     from saedm.seeding import set_seed
 
@@ -123,19 +128,23 @@ def greedy_match_batch(payload: dict) -> dict:
         device="cuda",
         attn_implementation="eager",
     )
+    sequences = payload["sequences"]
+    micro = int(payload.get("micro_batch", 64))
     results = []
     with torch.no_grad():
-        for seq in payload["sequences"]:
-            out = greedy_continuation_exact_match(
-                model, seq["tokens"], device="cuda"
+        for start in range(0, len(sequences), micro):
+            chunk = sequences[start : start + micro]
+            outs = greedy_continuation_exact_match_batch(
+                model, [s["tokens"] for s in chunk], device="cuda"
             )
-            results.append(
-                {
-                    "window_i": seq["window_i"],
-                    "exact_match": bool(out["exact_match"]),
-                    "n_match": int(out["n_match"]),
-                }
-            )
+            for seq, out in zip(chunk, outs, strict=True):
+                results.append(
+                    {
+                        "window_i": seq["window_i"],
+                        "exact_match": bool(out["exact_match"]),
+                        "n_match": int(out["n_match"]),
+                    }
+                )
     del model
     torch.cuda.empty_cache()
     from modal_jobs.common import hf_cache_vol
@@ -182,14 +191,15 @@ def main(gpu: str = DEFAULT_GPU, n_windows: int = N_WINDOWS, seed: int = SEED) -
         for w in windows:
             f.write(json.dumps(w) + "\n")
 
-    # Chunk for Modal (generation is slow).
-    chunk = 500
+    # Chunk for Modal; each container micro-batches AR greedy on GPU.
+    chunk = 2000
     payloads = []
     for start in range(0, len(windows), chunk):
         payloads.append(
             {
                 "sequences": windows[start : start + chunk],
                 "seed": seed,
+                "micro_batch": 64,
             }
         )
     print(f"Launching {len(payloads)} greedy batches on {gpu}")
