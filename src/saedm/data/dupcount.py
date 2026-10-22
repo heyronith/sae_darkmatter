@@ -256,30 +256,29 @@ def longest_eos_free_continuation(
     return best, True, len(best)
 
 
-def llama_query_ids_for_continuation(
+def llama_query_ids_for_token_span(
     neox_tokenizer: Any,
     llama_tokenizer: Any,
     token_ids: list[int],
     *,
-    prompt_len: int = PROMPT_LEN,
+    tok_start: int,
+    tok_end: int,
     edge_drop: int = LLAMA_EDGE_DROP,
     min_len: int = LLAMA_MIN_QUERY_LEN,
 ) -> dict[str, Any]:
-    """Build token-aligned Llama ``query_ids`` for the NeoX continuation span.
+    """Build token-aligned Llama ``query_ids`` for NeoX tokens ``[tok_start, tok_end)``.
 
-    Decodes the full window, retokenizes with Llama-2, keeps Llama tokens whose
-    character spans lie entirely inside the continuation span, then drops
-    ``edge_drop`` tokens at each end.
+    Decodes ``token_ids``, retokenizes with Llama-2, keeps Llama tokens whose
+    character spans lie entirely inside the NeoX span's character range, then
+    drops ``edge_drop`` tokens at each end. Does not apply EOS trimming (callers
+    that need boundary handling should trim first).
     """
-    cont_tokens, crosses, usable_len = longest_eos_free_continuation(
-        token_ids, prompt_len=prompt_len
-    )
-    # Rebuild a synthetic window: original prompt + usable continuation (no EOS).
-    prompt = list(token_ids[:prompt_len])
-    synthetic = prompt + cont_tokens
-    full_text, cont_start, cont_end = continuation_char_span(
-        neox_tokenizer, synthetic, prompt_len=prompt_len
-    )
+    if tok_start < 0 or tok_end > len(token_ids) or tok_start >= tok_end:
+        raise ValueError(f"bad token span [{tok_start}, {tok_end}) len={len(token_ids)}")
+    spans = neox_token_char_spans(neox_tokenizer, token_ids)
+    full_text = neox_tokenizer.decode(token_ids)
+    char_start = spans[tok_start][0]
+    char_end = spans[tok_end - 1][1]
 
     enc = llama_tokenizer(
         full_text,
@@ -292,7 +291,7 @@ def llama_query_ids_for_continuation(
     kept = [
         tid
         for tid, (s, e) in zip(ids, offsets, strict=True)
-        if s >= cont_start and e <= cont_end and e > s
+        if s >= char_start and e <= char_end and e > s
     ]
     too_short_before_drop = len(kept) < (min_len + 2 * edge_drop)
     if len(kept) > 2 * edge_drop:
@@ -303,12 +302,46 @@ def llama_query_ids_for_continuation(
     return {
         "query_ids": kept,
         "query_len_tokens": len(kept),
-        "crosses_doc_boundary": crosses,
-        "usable_cont_len": usable_len,
         "too_short": too_short or too_short_before_drop,
-        "cont_char_span": [cont_start, cont_end],
+        "char_span": [char_start, char_end],
+        "tok_span": [tok_start, tok_end],
         "full_text": full_text,
     }
+
+
+def llama_query_ids_for_continuation(
+    neox_tokenizer: Any,
+    llama_tokenizer: Any,
+    token_ids: list[int],
+    *,
+    prompt_len: int = PROMPT_LEN,
+    edge_drop: int = LLAMA_EDGE_DROP,
+    min_len: int = LLAMA_MIN_QUERY_LEN,
+) -> dict[str, Any]:
+    """Build token-aligned Llama ``query_ids`` for the NeoX continuation span.
+
+    Applies EOS trimming to the continuation, then delegates to
+    :func:`llama_query_ids_for_token_span` on the synthetic prompt+cont window.
+    """
+    cont_tokens, crosses, usable_len = longest_eos_free_continuation(
+        token_ids, prompt_len=prompt_len
+    )
+    prompt = list(token_ids[:prompt_len])
+    synthetic = prompt + cont_tokens
+    # After EOS trim, continuation occupies [prompt_len, len(synthetic)).
+    out = llama_query_ids_for_token_span(
+        neox_tokenizer,
+        llama_tokenizer,
+        synthetic,
+        tok_start=prompt_len,
+        tok_end=len(synthetic),
+        edge_drop=edge_drop,
+        min_len=min_len,
+    )
+    out["crosses_doc_boundary"] = crosses
+    out["usable_cont_len"] = usable_len
+    out["cont_char_span"] = out["char_span"]
+    return out
 
 
 def is_trivial_sequence(token_ids: list[int], neox_tokenizer: Any) -> dict[str, Any]:

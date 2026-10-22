@@ -6,6 +6,7 @@ from saedm.data.dupcount import (
     GPT_NEOX_EOS_ID,
     continuation_char_span,
     llama_query_ids_for_continuation,
+    llama_query_ids_for_token_span,
     longest_eos_free_continuation,
     neox_token_char_spans,
 )
@@ -107,3 +108,24 @@ def test_llama_query_marks_too_short() -> None:
     assert out["crosses_doc_boundary"] is True
     assert out["too_short"] is True
     assert out["query_len_tokens"] < 16
+
+
+def test_token_span_prompt_vs_continuation() -> None:
+    neox = _FakeNeoX()
+    llama = _FakeLlama()
+    ids = list(range(64))
+    prompt = llama_query_ids_for_token_span(
+        neox, llama, ids, tok_start=0, tok_end=32, edge_drop=2, min_len=16
+    )
+    cont = llama_query_ids_for_token_span(
+        neox, llama, ids, tok_start=32, tok_end=64, edge_drop=2, min_len=16
+    )
+    full = llama_query_ids_for_token_span(
+        neox, llama, ids, tok_start=0, tok_end=64, edge_drop=2, min_len=16
+    )
+    assert prompt["query_ids"][0] == 2
+    assert prompt["query_ids"][-1] == 29
+    assert cont["query_ids"][0] == 34
+    assert cont["query_ids"][-1] == 61
+    assert full["query_len_tokens"] == 60  # 64 - 2*2
+    assert set(prompt["query_ids"]).isdisjoint(set(cont["query_ids"]))
