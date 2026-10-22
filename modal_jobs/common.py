@@ -24,8 +24,9 @@ image = (
     modal.Image.debian_slim(python_version="3.11")
     .pip_install_from_requirements(str(REPO_ROOT / "modal_jobs" / "requirements.lock"))
     .env({"HF_HOME": "/cache/hf"})
-    # Mount package sources (avoids relying on a site-packages install for lookup).
+    # Mount package sources onto PYTHONPATH (/root).
     .add_local_dir(str(REPO_ROOT / "src" / "saedm"), remote_path="/root/saedm")
+    .add_local_dir(str(REPO_ROOT / "modal_jobs"), remote_path="/root/modal_jobs")
 )
 
 app = modal.App("saedm", image=image)
