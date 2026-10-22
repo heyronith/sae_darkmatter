@@ -50,6 +50,7 @@ class SAE(nn.Module):
         *,
         k: int | None = None,
         threshold: Tensor | None = None,
+        apply_b_dec_to_input: bool = True,
     ) -> None:
         super().__init__()
         if activation not in {"relu", "topk", "jumprelu"}:
@@ -63,6 +64,7 @@ class SAE(nn.Module):
         self.d_sae = d_sae
         self.activation = activation
         self.k = k
+        self.apply_b_dec_to_input = apply_b_dec_to_input
 
         self.W_enc = nn.Parameter(torch.empty(d_model, d_sae, dtype=torch.float32))
         self.b_enc = nn.Parameter(torch.zeros(d_sae, dtype=torch.float32))
@@ -86,16 +88,18 @@ class SAE(nn.Module):
             return torch.relu(pre)
         if self.activation == "topk":
             assert self.k is not None
-            values, indices = torch.topk(pre, self.k, dim=-1)
+            relu_pre = torch.relu(pre)
+            values, indices = torch.topk(relu_pre, self.k, dim=-1)
             out = torch.zeros_like(pre)
             out.scatter_(-1, indices, values)
             return out
-        # jumprelu
+        # jumprelu: zero at or below threshold; pass through above
         return pre * (pre > self.threshold).to(dtype=pre.dtype)
 
     def encode(self, x: Tensor) -> Tensor:
         x32 = x.to(dtype=torch.float32)
-        pre = (x32 - self.b_dec) @ self.W_enc + self.b_enc
+        x_in = x32 - self.b_dec if self.apply_b_dec_to_input else x32
+        pre = x_in @ self.W_enc + self.b_enc
         return self._apply_activation(pre)
 
     def decode(self, z: Tensor) -> Tensor:

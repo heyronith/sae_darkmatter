@@ -18,12 +18,16 @@ from saedm.config import FrozenDict
 from saedm.paths import results_dir
 
 
+def _repo_root() -> Path:
+    return results_dir().parent
+
+
 def _git_commit() -> str:
     try:
         return (
             subprocess.check_output(
                 ["git", "rev-parse", "HEAD"],
-                cwd=results_dir().parent,
+                cwd=_repo_root(),
                 stderr=subprocess.DEVNULL,
                 text=True,
             ).strip()
@@ -33,10 +37,11 @@ def _git_commit() -> str:
 
 
 def _git_dirty() -> bool:
+    """True if the working tree has non-results/ changes."""
     try:
         status = subprocess.check_output(
-            ["git", "status", "--porcelain"],
-            cwd=results_dir().parent,
+            ["git", "status", "--porcelain", "--", ".", ":(exclude)results"],
+            cwd=_repo_root(),
             stderr=subprocess.DEVNULL,
             text=True,
         )
@@ -56,6 +61,14 @@ def _device_info() -> dict[str, Any]:
     return {"type": "cpu", "name": None}
 
 
+def _precision_info() -> dict[str, Any]:
+    return {
+        "cuda_matmul_allow_tf32": bool(torch.backends.cuda.matmul.allow_tf32),
+        "cudnn_allow_tf32": bool(torch.backends.cudnn.allow_tf32),
+        "float32_matmul_precision": torch.get_float32_matmul_precision(),
+    }
+
+
 def write_manifest(
     task_id: str,
     config: Mapping[str, Any] | FrozenDict,
@@ -66,10 +79,27 @@ def write_manifest(
     started_at: datetime | None = None,
     ended_at: datetime | None = None,
     model_info: Mapping[str, Any] | None = None,
+    allow_dirty: bool = False,
+    git_commit: str | None = None,
+    git_dirty: bool | None = None,
 ) -> Path:
-    """Write results/<task_id>/manifest.json and return its path."""
+    """Write results/<task_id>/manifest.json and return its path.
+
+    If ``git_commit`` / ``git_dirty`` are provided (e.g. Modal has no ``.git``),
+    they are used as-is. Otherwise git is queried, ignoring ``results/``.
+    """
     task_dir = Path(out_dir) if out_dir is not None else results_dir() / task_id
     task_dir.mkdir(parents=True, exist_ok=True)
+
+    if git_commit is None or git_dirty is None:
+        resolved_commit = _git_commit() if git_commit is None else git_commit
+        resolved_dirty = _git_dirty() if git_dirty is None else git_dirty
+    else:
+        resolved_commit = git_commit
+        resolved_dirty = git_dirty
+
+    if resolved_dirty and not allow_dirty:
+        raise RuntimeError("uncommitted code; commit before producing results")
 
     if isinstance(config, FrozenDict):
         config_payload = config.to_dict()
@@ -81,8 +111,8 @@ def write_manifest(
 
     manifest: dict[str, Any] = {
         "task_id": task_id,
-        "git_commit": _git_commit(),
-        "git_dirty": _git_dirty(),
+        "git_commit": resolved_commit,
+        "git_dirty": resolved_dirty,
         "timestamp_utc": {
             "start": start.isoformat().replace("+00:00", "Z"),
             "end": end.isoformat().replace("+00:00", "Z"),
@@ -96,6 +126,7 @@ def write_manifest(
         },
         "hostname": platform.node(),
         "device": _device_info(),
+        "precision": _precision_info(),
         "outputs": list(outputs or []),
     }
     if model_info is not None:

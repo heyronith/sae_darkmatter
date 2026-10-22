@@ -37,6 +37,26 @@ def _replace_output(output: Any, new_hidden: Tensor) -> Any:
     return new_hidden
 
 
+def _read_pre_hidden(args: tuple[Any, ...], kwargs: dict[str, Any]) -> Tensor:
+    if args:
+        return args[0]
+    if "hidden_states" in kwargs:
+        return kwargs["hidden_states"]
+    raise KeyError("hidden_states not found in pre-hook args or kwargs")
+
+
+def _write_pre_hidden(
+    args: tuple[Any, ...],
+    kwargs: dict[str, Any],
+    new_hidden: Tensor,
+) -> tuple[tuple[Any, ...], dict[str, Any]]:
+    if args:
+        return (new_hidden,) + args[1:], kwargs
+    new_kwargs = dict(kwargs)
+    new_kwargs["hidden_states"] = new_hidden
+    return args, new_kwargs
+
+
 @contextmanager
 def _registered_hooks(handles: list[Any]) -> Iterator[None]:
     try:
@@ -70,12 +90,16 @@ def capture(
         if kind == "resid_pre":
 
             def make_pre(name: str = hp) -> Callable:
-                def pre_hook(_module: nn.Module, args: tuple[Any, ...]) -> None:
-                    captured[name] = args[0].detach()
+                def pre_hook(
+                    _module: nn.Module,
+                    args: tuple[Any, ...],
+                    kwargs: dict[str, Any],
+                ) -> None:
+                    captured[name] = _read_pre_hidden(args, kwargs).detach()
 
                 return pre_hook
 
-            handles.append(layer.register_forward_pre_hook(make_pre()))
+            handles.append(layer.register_forward_pre_hook(make_pre(), with_kwargs=True))
         else:
 
             def make_post(name: str = hp) -> Callable:
@@ -115,11 +139,15 @@ def splice(
 
     if kind == "resid_pre":
 
-        def pre_hook(_module: nn.Module, args: tuple[Any, ...]) -> tuple[Any, ...]:
-            new_act = fn(args[0])
-            return (new_act,) + args[1:]
+        def pre_hook(
+            _module: nn.Module,
+            args: tuple[Any, ...],
+            kwargs: dict[str, Any],
+        ) -> tuple[tuple[Any, ...], dict[str, Any]]:
+            new_act = fn(_read_pre_hidden(args, kwargs))
+            return _write_pre_hidden(args, kwargs, new_act)
 
-        handles.append(layer.register_forward_pre_hook(pre_hook))
+        handles.append(layer.register_forward_pre_hook(pre_hook, with_kwargs=True))
     else:
 
         def fwd_hook(_module: nn.Module, _inputs: Any, output: Any) -> Any:
