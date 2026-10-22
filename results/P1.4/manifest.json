@@ -1,0 +1,36 @@
+{
+  "task_id": "P1.4",
+  "git_commit": "9c82eadc14a043517c9ef79ccd7bd4afeb1edc94",
+  "git_dirty": false,
+  "timestamp_utc": {
+    "start": "2026-10-22T08:55:47.543251Z",
+    "end": "2026-10-22T08:55:50.120808Z"
+  },
+  "seed": 0,
+  "config": {
+    "task_id": "P1.4",
+    "huffman_threshold": 2.5,
+    "heuristics_commit": "84ab8c0289f0f74b4b1edd99ba7d2bea8d58a6a2",
+    "seed": 0
+  },
+  "versions": {
+    "python": "3.11.15",
+    "torch": "2.14.1",
+    "transformers": "5.20.2"
+  },
+  "hostname": "Mac",
+  "device": {
+    "type": "cpu",
+    "name": null
+  },
+  "precision": {
+    "cuda_matmul_allow_tf32": false,
+    "cudnn_allow_tf32": false,
+    "float32_matmul_precision": "highest"
+  },
+  "outputs": [
+    "results/P1.4/g1_early.json",
+    "results/P1.4/examples.md",
+    "results/P1.4/notes.md"
+  ]
+}

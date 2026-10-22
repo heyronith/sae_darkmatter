@@ -1,0 +1,40 @@
+{
+  "source_commit_heuristics": "84ab8c0289f0f74b4b1edd99ba7d2bea8d58a6a2",
+  "huffman_threshold": 2.5,
+  "total_memorized": 811039,
+  "sample_size": 20000,
+  "per_stratum": {
+    "low": {
+      "before": 11474,
+      "after": 9289,
+      "removed_incrementing": 1664,
+      "removed_repeating": 461,
+      "removed_compressible": 218,
+      "removed_any_template": 2185
+    },
+    "mid": {
+      "before": 373,
+      "after": 229,
+      "removed_incrementing": 82,
+      "removed_repeating": 56,
+      "removed_compressible": 35,
+      "removed_any_template": 144
+    },
+    "high": {
+      "before": 8153,
+      "after": 7431,
+      "removed_incrementing": 241,
+      "removed_repeating": 350,
+      "removed_compressible": 299,
+      "removed_any_template": 722
+    }
+  },
+  "low_stratum_survivors_in_sample": 9289,
+  "scaled_low_survivor_estimate": {
+    "point": 376687.06354999996,
+    "ci95_low": 371087.1463545811,
+    "ci95_high": 382298.0548870844,
+    "method": "wilson_proportion * total_memorized"
+  },
+  "verdict": "continue_to_P1.5"
+}
