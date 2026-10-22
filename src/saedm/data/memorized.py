@@ -8,7 +8,8 @@ from typing import Any
 import numpy as np
 import pyarrow as pa
 import pyarrow.parquet as pq
-from huggingface_hub import hf_hub_download, dataset_info as hf_dataset_info
+from huggingface_hub import dataset_info as hf_dataset_info
+from huggingface_hub import hf_hub_download
 
 DATASET_ID = "EleutherAI/pythia-memorized-evals"
 # Final-checkpoint memorized set for Pythia-410M-deduped (step 143000).

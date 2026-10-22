@@ -50,7 +50,7 @@ def find_if_incrementing_or_repeating(
         for every_i in range(temp_len):
             curr_diff = None
             for i in range(every_i + temp_len, len(splits), temp_len):
-                if type(splits[i]) != type(splits[i - temp_len]):
+                if type(splits[i]) is not type(splits[i - temp_len]):
                     is_inc = False
                     break
 
