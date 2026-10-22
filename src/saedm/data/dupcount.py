@@ -49,7 +49,7 @@ def count_ngram(
         return json.loads(path.read_text())
 
     payload = {"index": index, "query_type": "count", "query": query}
-    max_attempts = 8
+    max_attempts = 12
     last_err: Exception | None = None
     for attempt in range(max_attempts):
         global _last_request_mono
@@ -62,7 +62,13 @@ def count_ngram(
         try:
             resp = requests.post(API_URL, json=payload, timeout=timeout_s)
             if resp.status_code in {403, 429, 500, 502, 503, 504}:
-                wait = min(120.0, (2**attempt) * 2.0)
+                # Cap high: public API occasionally bans briefly after large jobs.
+                wait = min(300.0, (2**attempt) * 3.0)
+                print(
+                    f"infini-gram {resp.status_code}; sleeping {wait:.0f}s "
+                    f"(attempt {attempt + 1}/{max_attempts})",
+                    flush=True,
+                )
                 time.sleep(wait)
                 last_err = requests.HTTPError(
                     f"{resp.status_code} for {API_URL} (attempt {attempt + 1})",
@@ -78,7 +84,7 @@ def count_ngram(
             return data
         except (requests.Timeout, requests.ConnectionError) as exc:
             last_err = exc
-            time.sleep(min(120.0, (2**attempt) * 2.0))
+            time.sleep(min(300.0, (2**attempt) * 3.0))
     assert last_err is not None
     raise last_err
 

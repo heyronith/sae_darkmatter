@@ -34,8 +34,8 @@ SEED = 0
 TOKENIZER_NAME = "EleutherAI/pythia-410m-deduped"
 TOKENIZER_REVISION = "step143000"
 EXAMPLE_N = 200
-WORKERS = 2
-MIN_INTERVAL_S = 0.2
+WORKERS = 1
+MIN_INTERVAL_S = 0.35
 
 
 def main() -> None:
