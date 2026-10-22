@@ -1,0 +1,41 @@
+{
+  "input_ids": [
+    510,
+    5347,
+    273,
+    6181,
+    310
+  ],
+  "logits_shape": [
+    1,
+    5,
+    50304
+  ],
+  "top5_next_tokens": [
+    {
+      "token": " a",
+      "token_id": 247,
+      "probability": 0.1119384765625
+    },
+    {
+      "token": " the",
+      "token_id": 253,
+      "probability": 0.1119384765625
+    },
+    {
+      "token": " not",
+      "token_id": 417,
+      "probability": 0.041168212890625
+    },
+    {
+      "token": " in",
+      "token_id": 275,
+      "probability": 0.0151519775390625
+    },
+    {
+      "token": " an",
+      "token_id": 271,
+      "probability": 0.0151519775390625
+    }
+  ]
+}

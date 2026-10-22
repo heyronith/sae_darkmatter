@@ -1,0 +1,4 @@
+model: EleutherAI/pythia-70m-deduped
+prompt: "The capital of France is"
+seed: 0
+task_id: P0.1
