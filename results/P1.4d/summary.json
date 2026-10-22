@@ -1,0 +1,98 @@
+{
+  "template_commit": "84ab8c0289f0f74b4b1edd99ba7d2bea8d58a6a2",
+  "huffman_threshold": 2.5,
+  "near_dup_threshold_default": 32,
+  "total_memorized": 811039,
+  "sample_size": 20000,
+  "n_trivial_excluded": 958,
+  "n_template_removed": 2364,
+  "strata_after_template": {
+    "recollection": 2019,
+    "near_dup": 5165,
+    "mid": 1051,
+    "high": 8443,
+    "unmatched": 0
+  },
+  "recollection_k_primary_histogram": {
+    "1": 530,
+    "2": 1200,
+    "3": 115,
+    "4": 135,
+    "5": 39
+  },
+  "scaled_estimates": {
+    "recollection": {
+      "sample_count": 2019,
+      "point": 81874.38705,
+      "ci95_low": 78549.97641046888,
+      "ci95_high": 85323.10531911252,
+      "method": "wilson_proportion * total_memorized"
+    },
+    "near_dup": {
+      "sample_count": 5165,
+      "point": 209450.82174999997,
+      "ci95_low": 204569.18147232558,
+      "ci95_high": 214407.7693060889,
+      "method": "wilson_proportion * total_memorized"
+    },
+    "mid": {
+      "sample_count": 1051,
+      "point": 42620.09945,
+      "ci95_low": 40180.950169770425,
+      "ci95_high": 45198.63339093924,
+      "method": "wilson_proportion * total_memorized"
+    },
+    "high": {
+      "sample_count": 8443,
+      "point": 342380.11385,
+      "ci95_low": 336841.0876058766,
+      "ci95_high": 347943.3910625809,
+      "method": "wilson_proportion * total_memorized"
+    }
+  },
+  "sensitivity_k_infgram_threshold": {
+    "8": {
+      "recollection": 1835,
+      "near_dup": 5349,
+      "scaled_recollection": {
+        "sample_count": 1835,
+        "point": 74412.82824999999,
+        "ci95_low": 71231.29893367522,
+        "ci95_high": 77721.53107785618,
+        "method": "wilson_proportion * total_memorized"
+      }
+    },
+    "32": {
+      "recollection": 2019,
+      "near_dup": 5165,
+      "scaled_recollection": {
+        "sample_count": 2019,
+        "point": 81874.38705,
+        "ci95_low": 78549.97641046888,
+        "ci95_high": 85323.10531911252,
+        "method": "wilson_proportion * total_memorized"
+      }
+    },
+    "128": {
+      "recollection": 2156,
+      "near_dup": 5028,
+      "scaled_recollection": {
+        "sample_count": 2156,
+        "point": 87430.00420000001,
+        "ci95_low": 84004.92335464268,
+        "ci95_high": 90977.2588389216,
+        "method": "wilson_proportion * total_memorized"
+      }
+    }
+  },
+  "frozen": {
+    "recollection_n": 2019,
+    "recollection_sha256": "a9fe85e5273dbf5770b62b484f87442323cdee33fbaabd01be4dbc6487d9663e",
+    "near_dup_n": 5165,
+    "near_dup_sha256": "075296b18445f7d5b9d93e02e0575bade0f0f13001c61422f592708184a4aca8",
+    "paths": {
+      "recollection": "data/P1.4d/recollection.jsonl",
+      "near_dup": "data/P1.4d/near_dup.jsonl"
+    }
+  }
+}

@@ -1,0 +1,43 @@
+{
+  "task_id": "P1.4d",
+  "git_commit": "e9de8eb92c6b4691c0dd67f482529b2ad2501ce2",
+  "git_dirty": false,
+  "timestamp_utc": {
+    "start": "2026-10-22T22:47:54.470674Z",
+    "end": "2026-10-22T22:47:56.886210Z"
+  },
+  "seed": 0,
+  "config": {
+    "task_id": "P1.4d",
+    "seed": 0,
+    "near_dup_threshold": 32,
+    "sensitivity_thresholds": [
+      8,
+      32,
+      128
+    ],
+    "template_commit": "84ab8c0289f0f74b4b1edd99ba7d2bea8d58a6a2",
+    "recollection_sha256": "a9fe85e5273dbf5770b62b484f87442323cdee33fbaabd01be4dbc6487d9663e",
+    "near_dup_sha256": "075296b18445f7d5b9d93e02e0575bade0f0f13001c61422f592708184a4aca8"
+  },
+  "versions": {
+    "python": "3.11.15",
+    "torch": "2.14.1",
+    "transformers": "5.20.2"
+  },
+  "hostname": "Mac",
+  "device": {
+    "type": "cpu",
+    "name": null
+  },
+  "precision": {
+    "cuda_matmul_allow_tf32": false,
+    "cudnn_allow_tf32": false,
+    "float32_matmul_precision": "highest"
+  },
+  "outputs": [
+    "results/P1.4d/summary.json",
+    "results/P1.4d/examples.md",
+    "results/P1.4d/notes.md"
+  ]
+}
