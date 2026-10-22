@@ -10,16 +10,16 @@ from saedm.loss import continuation_ce_and_greedy
 
 
 class _ToyModel:
-    """Logits that prefer target+1; position 31 predicts tokens[32] correctly."""
+    """Logits that prefer next = last+1 (matches ``list(range(64))`` windows)."""
 
     def __call__(self, input_ids: torch.Tensor) -> SimpleNamespace:
-        b, t = input_ids.shape
-        # vocab large enough for our toy ids
-        v = int(input_ids.max().item()) + 5
-        logits = torch.zeros(b, t, v)
-        for i in range(t - 1):
-            tgt = int(input_ids[0, i + 1].item())
-            logits[0, i, tgt] = 10.0  # strongly prefers the true next token
+        _b, t = input_ids.shape
+        v = max(int(input_ids.max().item()) + 5, 70)
+        logits = torch.zeros(1, t, v)
+        for i in range(t):
+            nxt = int(input_ids[0, i].item()) + 1
+            if nxt < v:
+                logits[0, i, nxt] = 10.0
         return SimpleNamespace(logits=logits)
 
 
@@ -30,3 +30,15 @@ def test_continuation_all_pre_predicted() -> None:
     assert out["n_novel"] == 0
     assert out["mean_ce"] < 0.1
     assert all(out["pre_predicted"])
+
+
+def test_greedy_exact_match_on_toy() -> None:
+    from saedm.loss import greedy_continuation_exact_match
+
+    tokens = list(range(64))
+    # Toy model always emits the true next token under teacher forcing of the
+    # growing prefix when the prefix is the true sequence — AR from prompt
+    # also recovers the continuation because each next id = prompt_len+k.
+    out = greedy_continuation_exact_match(_ToyModel(), tokens, device="cpu")
+    assert out["exact_match"] is True
+    assert out["n_match"] == 32
