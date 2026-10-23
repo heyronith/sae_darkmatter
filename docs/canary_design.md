@@ -130,19 +130,20 @@ memorization rate ≈0 on controls.
 
 ### Throughput benchmark (this task)
 
-See `results/P5.0/throughput.json` (20 Adam steps, float32, microbatch=2,
-seq=2049, one A100). Used to fill the budget table below after the run.
+Measured on one **A100-SXM4-40GB** (`results/P5.0/throughput.json`):
 
-### Cost model (fill numbers from throughput.json)
+- 20 Adam steps, float32, microbatch **2**, seq **2049**, LR `3e-5`,
+  revision `step140000`
+- **4175 tokens/s** (81 960 tokens in 19.6 s); peak mem ≈27 GB
+- Synthetic random tokens (compute only; not NeoX packing fidelity)
 
-Let `T` = measured tokens/s on one A100 (float32 Adam, microbatch `m_bench`).
-Pythia global batch = `1024 × 2049` tokens/step. Rough single-GPU time per
-Pythia-equivalent step ≈ `(1024×2049)/T` if we could scale microbatch (optimistic).
-Prefer costing as: **GPU-hours ≈ (n_steps × tokens_per_step) / T** with
-`tokens_per_step = micro_batch_train × 2049` at the microbatch we actually use.
+### Cost model
 
-Modal A100 list price ~ **$1.29–3.00 / GPU-h** (use **$1.50** mid for estimates;
-update if billing differs).
+Huang-style single-GPU continued pretrain uses batch **≈128** (not full 1024).
+At the measured sustained rate `T = 4175 tok/s`:
+
+`s_per_step ≈ (128 × 2049) / T ≈ 62.8 s`  
+(two runs = canary + control). Modal A100 ≈ **$1.50 / GPU-h**.
 
 ## 3. Risks & detection
 
@@ -156,19 +157,20 @@ update if billing differs).
 
 ## 4. Budget options
 
-Assumptions: continuation **S** steps from `step(143000−S)`; global batch 1024;
-two runs (canary + control); canary grid as above; A100 @ $1.50/h; throughput
-**T tok/s** from benchmark (placeholder until measured).
+Assumptions: continuation **S** steps from `step(143000−S)`; **batch 128**,
+seq 2049; two runs (canary + control); canary grid as above; A100 @ $1.50/h;
+`T = 4175 tok/s` → **62.8 s/step**.
 
-| Option | Steps S (×2 runs) | Canaries (n per k≤4) | Expected mem. @ k≤4 (rand+nat) | GPU-h (formula) | $ (÷) |
+| Option | Steps S (×2 runs) | Canaries (n per k≤4) | Expected mem. @ k≤4 (rand+nat) | GPU-h | $ |
 |---|---|---|---|---|---|
-| **Small** | 1 000 | 500 rand + 250 nat | ~100 (tight) | `2·1000·1024·2049 / T` | ·$1.50 |
-| **Medium** | 3 000 | 1000 + 500 | ~200+ | `2·3000·1024·2049 / T` | ·$1.50 |
-| **Large** | 10 000 + warm-start 1 000 | 1000 + 500; add k-grid denser | ~200+ and stabler curves | `2·11000·1024·2049 / T` | ·$1.50 |
+| **Small** | 1 000 | 500 rand + 250 nat | ~100 (tight) | **35** | **~$52** |
+| **Medium** | 3 000 | 1000 + 500 | ~200+ | **105** | **~$157** |
+| **Large** | 10 000 + warm-start 1 000 | 1000 + 500; denser k-grid | ~200+ + stabler curves | **384** | **~$576** |
 
 **Recommendation:** **Medium** — enough steps for k=128 spacing inside the run,
 powered k≤4 counts, and a meaningful loss comparison to the official
-checkpoint. Revisit after `throughput.json` lands.
+checkpoint. If fp16/bf16 + larger microbatch raises `T` 2–3×, Medium drops
+toward ~35–50 GPU-h.
 
 ## 5. Deliverables for a future P5.1
 

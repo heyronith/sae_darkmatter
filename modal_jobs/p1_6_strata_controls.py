@@ -21,7 +21,6 @@ from modal_jobs.common import (  # noqa: E402
     SECRETS,
     VOLUMES,
     app,
-    artifacts_vol,
     local_git_info,
 )
 
@@ -572,8 +571,6 @@ Artifacts: `{remote}`.
         precision=precision,
         model_info={"name": MODEL, "revision": FINAL_REV},
     )
-    # Touch volume commit path for any in-container writes (none here).
-    artifacts_vol.commit()
     print(json.dumps({
         "strata_n": {k: v["n_sampled"] if "n_sampled" in v else v.get("n")
                      for k, v in summary["strata"].items()},
