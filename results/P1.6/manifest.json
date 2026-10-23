@@ -1,0 +1,81 @@
+{
+  "task_id": "P1.6",
+  "git_commit": "141eec12f443a62bf6797cdb4f3bfef345c70e50",
+  "git_dirty": false,
+  "timestamp_utc": {
+    "start": "2026-10-23T02:47:10.975445Z",
+    "end": "2026-10-23T02:52:37.405685Z"
+  },
+  "seed": 0,
+  "config": {
+    "task_id": "P1.6",
+    "seed": 0,
+    "n_per": 1000,
+    "hashes": {
+      "reconstruction": "0cefedbd56bad10d28e49e142d9933704fab6830f17a2536b599486dc8b25f7c",
+      "near_dup": "b6f267e281a613f97b1e2bf375a658417b4ad37cdf4b5bb2d486afeba53795aa",
+      "mid": "d24b4f509036f4bba3f5f97096ad1455693e7b01008dede9b73b6f898da0d76f",
+      "high": "a382006fdfdc4cd92bf5d742e15c5abfd6a2e428f47735bb944ac7a4bea67eb0",
+      "C1": "3990666534ba5ed9536c97d6d9c4864eefe1e8e7d8d95bb1920e8c7daf9387fa",
+      "C2": "245612ced3fec6464c30386428af866d09e170686581bdf2d93332dac892f6b2",
+      "C3": "d4e4ec3171117de16c46387c6ebb7ffdf81005e0898e2b0d912f6af24a07b64a",
+      "splits": {
+        "reconstruction": {
+          "n_a": 500,
+          "n_b": 500,
+          "sha256_a": "1380be9c5ea0e1b62bbb2093939aa59aea2bfe32f3509543da2785a6226599e3",
+          "sha256_b": "b498b734ef82a2ea047f1d9dc20ba99115fa97773d56adeb97bcb98ceb6fd47b"
+        },
+        "near_dup": {
+          "n_a": 500,
+          "n_b": 500,
+          "sha256_a": "c2221dcc3178be4ed4fbcd6a6b9e88ef4a48061e927bcde6b7696170be795ba8",
+          "sha256_b": "16ab531fd000a93ab87d491c69463c34f7cd6341da0c9bed7428cac917d5dea8"
+        },
+        "mid": {
+          "n_a": 500,
+          "n_b": 500,
+          "sha256_a": "2dad1323866c87cedef2b53a675fde28156055e5fbacbea54f9bc5805ee4468a",
+          "sha256_b": "4cdf30e58c9a9b0d65f5b122d55a43521d06f0d4982901ee715304e2af64bfc7"
+        },
+        "high": {
+          "n_a": 500,
+          "n_b": 500,
+          "sha256_a": "69bd967cca8284c0aa23176f89a6f55bbc66742582dd91aa0bcb2a74fa53dfc7",
+          "sha256_b": "4850fb9069d822a2fdda8720a0aa1cb1f697cca4686a7a2a995839093cdf9ef9"
+        },
+        "C1": {
+          "n_a": 500,
+          "n_b": 500,
+          "sha256_a": "165524aca1326eec05985dbe4aac6eb066c4388567e3fb36335948988d28acbd",
+          "sha256_b": "b7a79961a04c46097c938147661415e67ea516ac9b03b10d3cdaa4a847e8bf6b"
+        }
+      }
+    }
+  },
+  "versions": {
+    "python": "3.11.15",
+    "torch": "2.14.1",
+    "transformers": "5.20.2"
+  },
+  "hostname": "Mac",
+  "device": {
+    "type": "cuda",
+    "name": "NVIDIA A100-SXM4-40GB",
+    "index": 0
+  },
+  "precision": {
+    "cuda_matmul_allow_tf32": false,
+    "cudnn_allow_tf32": false,
+    "float32_matmul_precision": "highest"
+  },
+  "outputs": [
+    "results/P1.6/summary.json",
+    "results/P1.6/notes.md",
+    "results/P1.6/cpu_summary.json"
+  ],
+  "model_info": {
+    "name": "EleutherAI/pythia-410m-deduped",
+    "revision": "step143000"
+  }
+}

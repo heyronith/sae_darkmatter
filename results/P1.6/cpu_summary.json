@@ -1,0 +1,54 @@
+{
+  "seed": 0,
+  "n_per_stratum": 1000,
+  "template_commit": "84ab8c0289f0f74b4b1edd99ba7d2bea8d58a6a2",
+  "huffman_threshold": 2.5,
+  "near_dup_threshold": 32,
+  "n_trivial_excluded": 958,
+  "n_template_removed": 2364,
+  "pools": {
+    "near_dup": {
+      "n_pool": 5165,
+      "n_sampled": 1000,
+      "sha256": "b6f267e281a613f97b1e2bf375a658417b4ad37cdf4b5bb2d486afeba53795aa"
+    },
+    "mid": {
+      "n_pool": 1051,
+      "n_sampled": 1000,
+      "sha256": "d24b4f509036f4bba3f5f97096ad1455693e7b01008dede9b73b6f898da0d76f"
+    },
+    "high": {
+      "n_pool": 8443,
+      "n_sampled": 1000,
+      "sha256": "a382006fdfdc4cd92bf5d742e15c5abfd6a2e428f47735bb944ac7a4bea67eb0"
+    }
+  },
+  "exposure_lift": {
+    "epoch1": {
+      "deduped_pile_tokens": 207000000000,
+      "packed_seq_len": 2049,
+      "n_sequences_one_epoch": 101024890,
+      "fraction": 0.95,
+      "index_cutoff": 95973645,
+      "step_cutoff": 93724,
+      "derivation": "floor(207000000000 / 2049) = 101024890; cutoff = floor(0.95 * 101024890) = 95973645"
+    },
+    "n_indices_epoch1": 95973645,
+    "n_k_primary_1_epoch1": 28780406,
+    "n_memorized_k_primary_1_epoch1": 86087,
+    "memorized_k1_over_all_k1": 0.0029911669765881692,
+    "p15c_never_trained_exact_match_rate": 2e-05,
+    "lift_vs_p15c": 149.55834882940846,
+    "memorized_meta": {
+      "dataset_id": "EleutherAI/pythia-memorized-evals",
+      "split": "deduped.410m",
+      "revision": "d97edd12f08884dae3dfcef8d5cbbba5129e49e0",
+      "n_rows": 811039
+    }
+  },
+  "C3": {
+    "n": 1000,
+    "sha256": "d4e4ec3171117de16c46387c6ebb7ffdf81005e0898e2b0d912f6af24a07b64a"
+  },
+  "note": "reconstruction / C1 / C2 / splits require GPU (modal_jobs/p1_6_strata_controls.py)"
+}
