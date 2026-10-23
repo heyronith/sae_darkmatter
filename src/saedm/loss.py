@@ -31,11 +31,13 @@ def continuation_ce_and_greedy(
     targets = ids[0, PROMPT_LEN:SEQ_LEN]  # [32]
     log_probs = F.log_softmax(cont_logits.float(), dim=-1)
     token_logprob = log_probs.gather(1, targets.unsqueeze(1)).squeeze(1)
+    token_ce = (-token_logprob).detach().cpu().tolist()
     ce = float((-token_logprob).mean().item())
     greedy = cont_logits.argmax(dim=-1)
     pre_predicted = (greedy == targets).tolist()
     return {
         "mean_ce": ce,
+        "token_ce": token_ce,
         "token_logprob": token_logprob.detach().cpu().tolist(),
         "pre_predicted": [bool(x) for x in pre_predicted],
         "n_pre_predicted": int(sum(pre_predicted)),
@@ -43,6 +45,47 @@ def continuation_ce_and_greedy(
         "greedy_ids": greedy.detach().cpu().tolist(),
         "target_ids": targets.detach().cpu().tolist(),
     }
+
+
+def continuation_ce_and_greedy_batch(
+    model: Any,
+    token_ids_batch: list[list[int]],
+    *,
+    device: str | torch.device = "cpu",
+) -> list[dict[str, Any]]:
+    """Batched teacher-forced continuation CE / greedy (same as single-row)."""
+    if not token_ids_batch:
+        return []
+    for token_ids in token_ids_batch:
+        if len(token_ids) < SEQ_LEN:
+            raise ValueError(f"need >= {SEQ_LEN} tokens, got {len(token_ids)}")
+    ids = torch.tensor(
+        [t[:SEQ_LEN] for t in token_ids_batch], dtype=torch.long, device=device
+    )
+    with torch.no_grad():
+        logits = model(input_ids=ids).logits
+    cont_logits = logits[:, PROMPT_LEN - 1 : SEQ_LEN - 1, :]
+    targets = ids[:, PROMPT_LEN:SEQ_LEN]
+    log_probs = F.log_softmax(cont_logits.float(), dim=-1)
+    token_logprob = log_probs.gather(2, targets.unsqueeze(-1)).squeeze(-1)
+    greedy = cont_logits.argmax(dim=-1)
+    out: list[dict[str, Any]] = []
+    for i in range(ids.shape[0]):
+        tl = token_logprob[i]
+        pred = (greedy[i] == targets[i]).tolist()
+        out.append(
+            {
+                "mean_ce": float((-tl).mean().item()),
+                "token_ce": (-tl).detach().cpu().tolist(),
+                "token_logprob": tl.detach().cpu().tolist(),
+                "pre_predicted": [bool(x) for x in pred],
+                "n_pre_predicted": int(sum(pred)),
+                "n_novel": int(CONT_LEN - sum(pred)),
+                "greedy_ids": greedy[i].detach().cpu().tolist(),
+                "target_ids": targets[i].detach().cpu().tolist(),
+            }
+        )
+    return out
 
 
 def greedy_continuation_exact_match(
