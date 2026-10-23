@@ -71,19 +71,27 @@ Natural > random follows Huang §4.4 (in-domain easier than shuffled). These are
 - **Why not step0:** matches Huang’s continued-pretraining counterfactual and
   keeps compute small.
 
-### Optimizer (states not released)
+### Optimizer
 
-Verified: Hugging Face / NeoX releases for Pythia provide **weights**, not
-Adam moments (`EleutherAI/neox-ckpt-pythia-410m-deduped` is weights-oriented;
-Huang similarly warm-start the optimizer). **Proposal:**
+**HF Transformers** branches (`EleutherAI/pythia-410m-deduped`) are **weights
+only**. **Native NeoX/DeepSpeed** checkpoints at
+[`EleutherAI/neox-ckpt-pythia-410m-deduped`](https://huggingface.co/EleutherAI/neox-ckpt-pythia-410m-deduped)
+include ZeRO Adam moments (`zero_pp_rank_*_optim_states.pt`) on **all 154
+branches**, including late `step140000` / `step143000` (repo card). Prefer
+loading those states for continued pretraining; fall back to Huang-style
+warm-start only if NeoX→train plumbing is too costly.
 
-1. Optional short warm-start: 1k–2k steps from `step{start−Δ}` with fresh Adam
-   (Huang Appendix B.5).
-2. Training Adam with Pythia betas **(0.9, 0.95)**, eps **1e-8**, weight decay
-   **0.1** (from `models/410M/pythia-410m-deduped.yml`).
-3. **LR:** hold **constant at Pythia `min_lr = 3e-5`** (end of cosine), which is
-   the schedule value near step 140k–143k. Do **not** restart warmup.
-4. Detect mismatch: compare no-canary loss trajectory to official
+**Proposal:**
+
+1. **Preferred:** resume from NeoX ckpt at `step140000` with its ZeRO optim
+   state (true \(O_i\)).
+2. **Fallback:** short warm-start (1k–2k steps) from `step{start−Δ}` with fresh
+   Adam (Huang Appendix B.5), then freeze that state for canary vs control.
+3. Adam betas **(0.9, 0.95)**, eps **1e-8**, weight decay **0.1**
+   (`models/410M/pythia-410m-deduped.yml`).
+4. **LR:** hold **constant at Pythia `min_lr = 3e-5`** (end of cosine near
+   step 140k–143k). Do **not** restart warmup.
+5. Detect mismatch: compare no-canary loss trajectory to official
    `step143000` on a frozen eval batch.
 
 ### Canaries (two types)
@@ -149,7 +157,7 @@ At the measured sustained rate `T = 4175 tok/s`:
 
 | Risk | Detection |
 |---|---|
-| Catastrophic drift from fresh Adam | No-canary CE vs official `step143000` on frozen eval; abort if median CE ratio > 1.05 |
+| Catastrophic drift from fresh Adam (fallback path) | No-canary CE vs official `step143000` on frozen eval; abort if median CE ratio > 1.05; prefer NeoX ZeRO resume to avoid |
 | LR mismatch | Same; also track train loss for first 100 steps vs Huang-style warm-start ablation |
 | Eval contamination (val canaries already reconstructible) | P1.5c-style greedy filter before insertion; log excluded ids |
 | Canaries colliding with slice n-grams | Pre-count with infini-gram / local index |
