@@ -1,0 +1,40 @@
+{
+  "task_id": "P5.0",
+  "git_commit": "141eec12f443a62bf6797cdb4f3bfef345c70e50",
+  "git_dirty": false,
+  "timestamp_utc": {
+    "start": "2026-10-23T02:47:12.409482Z",
+    "end": "2026-10-23T02:47:48.179122Z"
+  },
+  "seed": 0,
+  "config": {
+    "task_id": "P5.0",
+    "n_steps": 20,
+    "micro_batch": 2,
+    "seq_len": 2049,
+    "revision": "step140000"
+  },
+  "versions": {
+    "python": "3.11.15",
+    "torch": "2.14.1",
+    "transformers": "5.20.2"
+  },
+  "hostname": "Mac",
+  "device": {
+    "type": "cuda",
+    "name": "NVIDIA A100-SXM4-40GB",
+    "index": 0
+  },
+  "precision": {
+    "cuda_matmul_allow_tf32": false,
+    "cudnn_allow_tf32": true,
+    "float32_matmul_precision": "highest"
+  },
+  "outputs": [
+    "results/P5.0/throughput.json"
+  ],
+  "model_info": {
+    "name": "EleutherAI/pythia-410m-deduped",
+    "revision": "step140000"
+  }
+}

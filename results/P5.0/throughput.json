@@ -1,0 +1,28 @@
+{
+  "benchmark": {
+    "elapsed_s": 19.629686379000002,
+    "load_s": 3.741901734999999,
+    "n_steps": 20,
+    "micro_batch": 2,
+    "seq_len": 2049,
+    "tokens": 81960,
+    "tokens_per_s": 4175.308683875942,
+    "steps_per_s": 1.0188649789838804,
+    "device_name": "NVIDIA A100-SXM4-40GB",
+    "peak_mem_bytes": 27156124160,
+    "lr": 3e-05,
+    "revision": "step140000",
+    "dtype": "float32",
+    "optimizer": "Adam(betas=(0.9,0.95))",
+    "note": "Synthetic random tokens; measures compute throughput only. Not a fidelity match to NeoX megatron packing."
+  },
+  "gpu_requested": "A100",
+  "extrapolations": {
+    "assumption": "Scale tokens/s linearly with micro_batch up to effective global batch 1024\u00d72049 (Pythia); this bench used micro=2.",
+    "tokens_per_s_measured": 4175.308683875942,
+    "pythia_tokens_per_step": 2098176,
+    "estimated_s_per_pythia_step_at_measured_micro": 502.51997130240005,
+    "note": "Real NeoX uses 32\u00d7A100 with microbatch 32/GPU (global 1024). Single-GPU float32 Adam here is a lower bound on tokens/s/GPU for costing; see docs/canary_design.md for budget table."
+  },
+  "gpu_hours": 0.005452690660833334
+}
